@@ -2,6 +2,7 @@
 using System.Net.Http;
 
 using GTRC_Basics;
+using System.Net;
 
 namespace GTRC_Database_Viewer.Models
 {
@@ -14,12 +15,12 @@ namespace GTRC_Database_Viewer.Models
         public HttpRequest() { }
         public HttpRequest(string _baseUrl) { baseUrl = _baseUrl; }
 
-        public async Task<Tuple<string, string>> SendHttpRequest(HttpRequestType requestType, string? path = null, dynamic? objDto = null)
+        public async Task<Tuple<HttpStatusCode, string>> SendHttpRequest(HttpRequestType requestType, string? path = null, dynamic? objDto = null)
         {
             HttpResponseMessage? _response;
             path ??= string.Empty;
             string url = string.Join(s, [baseUrl, modelType, requestType.ToString()]);
-            Tuple<string, string> response = Tuple.Create(string.Empty, "500");
+            Tuple<HttpStatusCode, string> response = Tuple.Create(HttpStatusCode.InternalServerError, string.Empty);
             using HttpClient httpClient = new();
             {
                 try
@@ -34,7 +35,7 @@ namespace GTRC_Database_Viewer.Models
                     };
                     if (_response is not null)
                     {
-                        string status = _response.StatusCode.ToString();
+                        HttpStatusCode status = _response.StatusCode;
                         string message = await _response.Content.ReadAsStringAsync();
                         response = Tuple.Create(status, message);
                     }
@@ -44,67 +45,67 @@ namespace GTRC_Database_Viewer.Models
             return response;
         }
 
-        public Tuple<string, ModelType?> GetObject(Tuple<string, string> response)
+        public Tuple<HttpStatusCode, ModelType?> GetObject(Tuple<HttpStatusCode, string> response)
         {
             return Tuple.Create(response.Item1, JsonConvert.DeserializeObject<ModelType>(response.Item2));
         }
 
-        public Tuple<string, List<ModelType>> GetList(Tuple<string, string> response)
+        public Tuple<HttpStatusCode, List<ModelType>> GetList(Tuple<HttpStatusCode, string> response)
         {
             return Tuple.Create(response.Item1, JsonConvert.DeserializeObject<List<ModelType>>(response.Item2) ?? []);
         }
 
-        public async Task<Tuple<string, List<ModelType>>> GetAll()
+        public async Task<Tuple<HttpStatusCode, List<ModelType>>> GetAll()
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Get);
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get);
             return GetList(response);
         }
 
-        public async Task<Tuple<string, ModelType?>> GetById(int id)
+        public async Task<Tuple<HttpStatusCode, ModelType?>> GetById(int id)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Get, s + id.ToString());
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + id.ToString());
             return GetObject(response);
         }
 
-        public async Task<Tuple<string, ModelType?>> GetByUniqProps(dynamic objDto)
+        public async Task<Tuple<HttpStatusCode, ModelType?>> GetByUniqProps(dynamic objDto)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByUniqProps", objDto);
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByUniqProps", objDto);
             return GetObject(response);
         }
 
-        public async Task<Tuple<string, List<ModelType>>> GetByProps(dynamic objDto)
+        public async Task<Tuple<HttpStatusCode, List<ModelType>>> GetByProps(dynamic objDto)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByProps", objDto);
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByProps", objDto);
             return GetList(response);
         }
 
-        public async Task<Tuple<string, List<ModelType>>> GetByFilter(dynamic objDto)
+        public async Task<Tuple<HttpStatusCode, List<ModelType>>> GetByFilter(dynamic objDto)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByFilter", objDto);
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByFilter", objDto);
             return GetList(response);
         }
 
-        public async Task<Tuple<string, ModelType?>> GetTemp()
+        public async Task<Tuple<HttpStatusCode, ModelType?>> GetTemp()
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Get, s + "Temp");
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "Temp");
             return GetObject(response);
         }
         
-        public async Task<Tuple<string, ModelType?>> Add(dynamic objDto)
+        public async Task<Tuple<HttpStatusCode, ModelType?>> Add(dynamic objDto)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Add, objDto: objDto);
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Add, objDto: objDto);
             return GetObject(response);
         }
 
-        public async Task<string> Delete(int id, bool force = false)
+        public async Task<HttpStatusCode> Delete(int id, bool force = false)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Delete, s + id.ToString() + s + force.ToString());
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Delete, s + id.ToString() + s + force.ToString());
             return response.Item1;
         }
 
-        public async Task<Tuple<string, ModelType?>> Update(dynamic objDto)
+        public async Task<Tuple<HttpStatusCode, ModelType?>> Update(dynamic objDto)
         {
-            Tuple<string, string> response = await SendHttpRequest(HttpRequestType.Update, objDto: objDto);
+            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Update, objDto: objDto);
             return GetObject(response);
         }
     }
