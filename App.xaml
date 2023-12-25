@@ -26,6 +26,9 @@
             <DataTemplate DataType="{x:Type viewModel:ApiConSettingsVM}">
                 <view:ApiConSettingsView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:DatabaseVM}">
+                <view:DatabaseView/>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

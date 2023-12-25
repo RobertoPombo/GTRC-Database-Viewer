@@ -15,7 +15,7 @@ namespace GTRC_Database_Viewer.Windows
             if (!Directory.Exists(GlobalValues.DataDirectory)) { Directory.CreateDirectory(GlobalValues.DataDirectory); }
             GlobalWinValues.SetCultureInfo();
             GlobalWinValues.UpdateWpfColors(this);
-            //InitializeNotifications();
+            InitializeNotifications();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.6;
             Height = GlobalWinValues.screenHeight * 0.6;
@@ -25,15 +25,15 @@ namespace GTRC_Database_Viewer.Windows
         }
 
         public void CloseWindow(object? sender, CancelEventArgs e) { }
-        /*
+
         public void InitializeNotifications()
         {
-            ThemeColor.Statics.PublishList += UpdateThemeColors;
+            //ThemeColor.Statics.PublishList += UpdateThemeColors;
         }
 
         public void UpdateThemeColors()
         {
-            for (int colorNr = 0; colorNr < ThemeColor.Statics.List.Count; colorNr++)
+            /*for (int colorNr = 0; colorNr < ThemeColor.Statics.List.Count; colorNr++)
             {
                 SolidColorBrush _color = new(Color.FromArgb(
                     (byte)ThemeColor.Statics.List[colorNr].Alpha,
@@ -42,8 +42,8 @@ namespace GTRC_Database_Viewer.Windows
                     (byte)ThemeColor.Statics.List[colorNr].Blue));
                 if (colorNr < WpfColors.List.Count) { WpfColors.List[colorNr] = _color; }
                 else { WpfColors.List.Add(_color); }
-            }
+            }*/
             GlobalWinValues.UpdateWpfColors(this);
-        }*/
+        }
     }
 }

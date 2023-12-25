@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="GTRC_Database_Viewer.Windows.DatabaseControlsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GTRC_Database_Viewer.Windows"
+             mc:Ignorable="d">
+    <StackPanel Grid.Row="1" Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+            <Button Command="{Binding DelCmd}"
+                    Style="{StaticResource DelButtonStyle}" Margin="15,0"/>
+            <Button Command="{Binding ClearCurrentCmd}"
+                    Content="Clear" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
+            <Button Command="{Binding UpdateCmd}"
+                    Content="Update" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
+            <Button Command="{Binding AddCmd}"
+                    Style="{StaticResource AddButtonStyle}" Margin="15,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+            <Button Content="SQL" Command="{Binding LoadSQLCmd}"
+                    Style="{StaticResource ResTextButtonStyle}" Padding="7" Margin="5,0"/>
+            <Button Content="SQL" Command="{Binding WriteSQLCmd}"
+                    Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
+            <Button Content="Json" Command="{Binding LoadJsonCmd}"
+                    Style="{StaticResource ResTextButtonStyle}" Padding="7" Margin="5,0"/>
+            <Button Content="Json" Command="{Binding WriteJsonCmd}"
+                    Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+            <Button Content="List" Command="{Binding ClearListCmd}"
+                    Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
+            <Button Content="SQL" Command="{Binding ClearSQLCmd}"
+                    Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
+            <Button Content="Json" Command="{Binding ClearJsonCmd}"
+                    Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+            <CheckBox IsChecked="{Binding ForceDel}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+            <Label Content="Delete child objects" Style="{StaticResource LabelStyle}" Margin="5"/>
+        </StackPanel>
+        <Button Command="{Binding CleanUpListCmd}" Content="Clean up list"
+                Style="{StaticResource ButtonStyle}" Height="30" Margin="0,5"/>
+    </StackPanel>
+</UserControl>
