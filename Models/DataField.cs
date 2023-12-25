@@ -5,17 +5,17 @@ using GTRC_WPF;
 
 namespace GTRC_Database_Viewer.Models
 {
-    public class DataFieldM : ObservableObject
+    public class DataField : ObservableObject
     {
         private string name = "";
         private dynamic val = GlobalValues.NoId;
         private List<KeyValuePair<string, int>> idList = [];
         private string? path;
 
-        public DataRowM? DataRow;
+        public DataRow? DataRow;
         public PropertyInfo Property;
 
-        public DataFieldM(DataRowM? _dataRow, KeyValuePair<PropertyInfo, dynamic> item)
+        public DataField(DataRow? _dataRow, KeyValuePair<PropertyInfo, dynamic> item)
         {
             DataRow = _dataRow;
             Property = item.Key;

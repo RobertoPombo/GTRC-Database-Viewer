@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="GTRC_Database_Viewer.Windows.ApiConSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GTRC_Database_Viewer.Windows"
+             mc:Ignorable="d">
+
+    <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+        <StackPanel Orientation="Horizontal">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="SettingNames"/>
+                    <ColumnDefinition Width="Auto" MinWidth="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="5">
+                    <Label Content="SQL Database"
+                           Style="{StaticResource LabelStyle}" Margin="0" HorizontalAlignment="Center"/>
+                    <Button Command="{Binding SaveSettingsCmd}"
+                            Style="{StaticResource SavButtonStyle}" Margin="1,5"/>
+                    <Button Command="{Binding RestoreSettingsCmd}"
+                            Style="{StaticResource ResButtonStyle}" Margin="1,5"/>
+                </StackPanel>
+
+                <Grid Grid.Row="0" Grid.Column="1" Margin="10,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0"
+                              ItemsSource="{Binding ListConSettings, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedValue="{Binding SelectedConnection, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="Name" Style="{StaticResource ComboBoxStyle}" Cursor="Hand"/>
+                    <CheckBox Grid.Column="1"
+                            IsChecked="{Binding IsActive}"
+                            Style="{StaticResource SwitchCheckBoxStyle}" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                    <Button Grid.Column="2"
+                            Command="{Binding AddPresetCmd}"
+                            Style="{StaticResource AddButtonStyle}" Margin="0"/>
+                    <Button Grid.Column="3"
+                            Command="{Binding DelPresetCmd}"
+                            Style="{StaticResource DelButtonStyle}" Margin="0"/>
+                </Grid>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Preset Name" Style="{StaticResource LabelStyle}" Margin="5"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="Protocol Type" Style="{StaticResource LabelStyle}" Margin="5"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="Network Type" Style="{StaticResource LabelStyle}" Margin="5"/>
+                <Label Grid.Row="4" Grid.Column="0" Content="IP-Adress Type" Style="{StaticResource LabelStyle}" Margin="5" Visibility="{Binding VisibilityIpAdressType}"/>
+                <Label Grid.Row="5" Grid.Column="0" Content="IPv4 Address" Style="{StaticResource LabelStyle}" Margin="5" Visibility="{Binding VisibilityIpv4}"/>
+                <Label Grid.Row="6" Grid.Column="0" Content="IPv6 Address" Style="{StaticResource LabelStyle}" Margin="5" Visibility="{Binding VisibilityIpv6}"/>
+                <Label Grid.Row="7" Grid.Column="0" Content="Port" Style="{StaticResource LabelStyle}" Margin="5"/>
+
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedConnection.Name}" Style="{StaticResource TextBoxStyle}" Margin="10,5"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Margin="10,5"
+                          ItemsSource="{Binding ProtocolTypes, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding SelectedConnection.ProtocolType, UpdateSourceTrigger=PropertyChanged}"
+                          Style="{StaticResource ComboBoxStyle}" Cursor="Hand"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Margin="10,5"
+                          ItemsSource="{Binding NetworkTypes, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding NetworkType, UpdateSourceTrigger=PropertyChanged}"
+                          Style="{StaticResource ComboBoxStyle}" Cursor="Hand"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" Margin="10,5"
+                          ItemsSource="{Binding IpAdressTypes, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding IpAdressType, UpdateSourceTrigger=PropertyChanged}"
+                          Style="{StaticResource ComboBoxStyle}" Cursor="Hand" Visibility="{Binding VisibilityIpAdressType}"/>
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedConnection.Ipv4}" Style="{StaticResource TextBoxStyle}" Margin="10,5" Visibility="{Binding VisibilityIpv4}"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SelectedConnection.Ipv6}" Style="{StaticResource TextBoxStyle}" Margin="10,5" Visibility="{Binding VisibilityIpv6}"/>
+                <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SelectedConnection.Port}" Style="{StaticResource TextBoxStyle}" Margin="10,5"/>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -1,49 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System.Net.Http;
+using System.Net;
 
 using GTRC_Basics;
-using System.Net;
 
 namespace GTRC_Database_Viewer.Models
 {
-    public class HttpRequest<ModelType>
+    public class HttpRequest<ModelType>(ApiConSettings apiCon)
     {
-        private static readonly string s = "/";
-        private static string baseUrl = "http://localhost:5000/";
-        private static string modelType = typeof(ModelType).Name;
-
-        public HttpRequest() { }
-        public HttpRequest(string _baseUrl) { baseUrl = _baseUrl; }
-
-        public async Task<Tuple<HttpStatusCode, string>> SendHttpRequest(HttpRequestType requestType, string? path = null, dynamic? objDto = null)
-        {
-            HttpResponseMessage? _response;
-            path ??= string.Empty;
-            string url = string.Join(s, [baseUrl, modelType, requestType.ToString()]);
-            Tuple<HttpStatusCode, string> response = Tuple.Create(HttpStatusCode.InternalServerError, string.Empty);
-            using HttpClient httpClient = new();
-            {
-                try
-                {
-                    _response = requestType switch
-                    {
-                        HttpRequestType.Get => await httpClient.GetAsync(url + path),
-                        HttpRequestType.Add => await httpClient.PostAsync(url + path, objDto),
-                        HttpRequestType.Delete => await httpClient.DeleteAsync(url + path),
-                        HttpRequestType.Update => await httpClient.DeleteAsync(url + path, objDto),
-                        _ => null,
-                    };
-                    if (_response is not null)
-                    {
-                        HttpStatusCode status = _response.StatusCode;
-                        string message = await _response.Content.ReadAsStringAsync();
-                        response = Tuple.Create(status, message);
-                    }
-                }
-                catch { }
-            }
-            return response;
-        }
+        private static readonly string model = typeof(ModelType).Name;
 
         public Tuple<HttpStatusCode, ModelType?> GetObject(Tuple<HttpStatusCode, string> response)
         {
@@ -57,55 +21,55 @@ namespace GTRC_Database_Viewer.Models
 
         public async Task<Tuple<HttpStatusCode, List<ModelType>>> GetAll()
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get);
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Get);
             return GetList(response);
         }
 
         public async Task<Tuple<HttpStatusCode, ModelType?>> GetById(int id)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + id.ToString());
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Get, "/" + id.ToString());
             return GetObject(response);
         }
 
         public async Task<Tuple<HttpStatusCode, ModelType?>> GetByUniqProps(dynamic objDto)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByUniqProps", objDto);
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Get, "/ByUniqProps", objDto);
             return GetObject(response);
         }
 
         public async Task<Tuple<HttpStatusCode, List<ModelType>>> GetByProps(dynamic objDto)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByProps", objDto);
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Get, "/ByProps", objDto);
             return GetList(response);
         }
 
         public async Task<Tuple<HttpStatusCode, List<ModelType>>> GetByFilter(dynamic objDto)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "ByFilter", objDto);
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Get, "/ByFilter", objDto);
             return GetList(response);
         }
 
         public async Task<Tuple<HttpStatusCode, ModelType?>> GetTemp()
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Get, s + "Temp");
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Get, "/Temp");
             return GetObject(response);
         }
         
         public async Task<Tuple<HttpStatusCode, ModelType?>> Add(dynamic objDto)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Add, objDto: objDto);
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Add, objDto: objDto);
             return GetObject(response);
         }
 
         public async Task<HttpStatusCode> Delete(int id, bool force = false)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Delete, s + id.ToString() + s + force.ToString());
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Delete, "/" + id.ToString() + "/" + force.ToString());
             return response.Item1;
         }
 
         public async Task<Tuple<HttpStatusCode, ModelType?>> Update(dynamic objDto)
         {
-            Tuple<HttpStatusCode, string> response = await SendHttpRequest(HttpRequestType.Update, objDto: objDto);
+            Tuple<HttpStatusCode, string> response = await apiCon.SendHttpRequest(model, HttpRequestType.Update, objDto: objDto);
             return GetObject(response);
         }
     }
