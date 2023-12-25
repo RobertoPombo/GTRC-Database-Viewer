@@ -8,7 +8,7 @@ namespace GTRC_Database_Viewer.Models
     public class DataFieldM : ObservableObject
     {
         private string name = "";
-        private dynamic val = GlobalValues.NoID;
+        private dynamic val = GlobalValues.NoId;
         private List<KeyValuePair<string, int>> idList = [];
         private string? path;
 
@@ -22,13 +22,9 @@ namespace GTRC_Database_Viewer.Models
             Name = Property.Name;
             Value = item.Value;
             idList.Clear();
-            dynamic? _statics = StaticFieldList.GetByIDProperty(Name);
-            if (_statics is not null)
+            foreach (var _obj in new List<dynamic>()) // checken, ob PropertyName Id-Prop ist und durch die ensprechende Tabelle iterieren.
             {
-                foreach (var _obj in _statics.IDList)
-                {
-                    idList.Add(new KeyValuePair<string, int>(_obj.ToString(), _obj.ID));
-                }
+                idList.Add(new KeyValuePair<string, int>(_obj.ToString(), _obj.ID));
             }
             if (Name == "Logo") { Path = Value.ToString(); } else { Path = null; }
         }
@@ -37,7 +33,7 @@ namespace GTRC_Database_Viewer.Models
 
         public dynamic Value { get { return val; } set { val = value; RaisePropertyChanged(); } }
 
-        public List<KeyValuePair<string, int>> IDList { get { return idList; } set { idList = value; RaisePropertyChanged(); } }
+        public List<KeyValuePair<string, int>> IdList { get { return idList; } set { idList = value; RaisePropertyChanged(); } }
 
         public dynamic? Path { get { return path; } set { path = value; RaisePropertyChanged(); } }
     }
