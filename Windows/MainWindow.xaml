@@ -27,7 +27,7 @@
             </TabItem>
             <TabItem Header="API Connection Settings" Style="{StaticResource TabItemStyle}" x:Name="SettingsTabItem">
                 <ScrollViewer Margin="15" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                    <UserControl Content="{Binding ApiConSettingsVM}"/>
+                    <UserControl Content="{Binding ClientConnectionSettingsVM}"/>
                 </ScrollViewer>
             </TabItem>
         </TabControl>

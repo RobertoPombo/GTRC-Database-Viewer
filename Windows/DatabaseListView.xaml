@@ -11,7 +11,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListBox Grid.Row="0" ItemsSource="{Binding Filter}"
+        <ListBox Grid.Row="0" ItemsSource="{Binding GenericDatabaseVM.Current.List}"
                  Style="{StaticResource ListBoxHeaderStyle}"  ItemContainerStyle="{StaticResource ListBoxHeaderItemStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -26,7 +26,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Filter}"
+        <ListBox Grid.Row="1" ItemsSource="{Binding GenericDatabaseVM.Current.List}"
                  Style="{StaticResource ListBoxFilterStyle}"  ItemContainerStyle="{StaticResource ListBoxFilterItemStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -40,7 +40,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-            <ListBox ItemsSource="{Binding List}"
+            <ListBox ItemsSource="{Binding GenericDatabaseVM.List}"
                      SelectedItem="{Binding Selected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                      Style="{StaticResource ListBoxStyle}" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
                 <ListBox.ItemTemplate>

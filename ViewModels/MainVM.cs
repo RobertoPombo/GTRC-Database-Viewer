@@ -2,16 +2,16 @@
 {
     public class MainVM : GTRC_WPF.ViewModels.MainVM
     {
-        private object? apiConSettingsVM;
+        private object? clientConnectionSettingsVM;
         private object? databaseVM;
 
         public MainVM()
         {
-            ApiConSettingsVM = new ApiConSettingsVM();
             DatabaseVM = new DatabaseVM();
+            ClientConnectionSettingsVM = new ClientConnectionSettingsVM();
         }
 
-        public object? ApiConSettingsVM { get { return apiConSettingsVM; } set { apiConSettingsVM = value; RaisePropertyChanged(); } }
+        public object? ClientConnectionSettingsVM { get { return clientConnectionSettingsVM; } set { clientConnectionSettingsVM = value; RaisePropertyChanged(); } }
         public object? DatabaseVM { get { return databaseVM; } set { databaseVM = value; RaisePropertyChanged(); } }
     }
 }

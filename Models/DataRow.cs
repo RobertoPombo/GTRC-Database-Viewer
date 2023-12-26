@@ -2,33 +2,39 @@
 using System.Reflection;
 
 using GTRC_Basics;
+using GTRC_Basics.Models.Common;
 using GTRC_WPF;
 
 namespace GTRC_Database_Viewer.Models
 {
-    public class DataRow : ObservableObject
+    public class DataRow<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
-        private ObservableCollection<DataField> list = [];
+        private ObservableCollection<DataField<ModelType>> list = [];
 
-        public dynamic Object;
+        public ModelType Object;
 
-        public DataRow(dynamic _obj, bool retID, bool retJsonIgnore)
+        public DataRow(ModelType obj, bool retId)
         {
-            Object = _obj;
-            Dictionary<PropertyInfo, dynamic> dict = _obj.ReturnAsDict(retID, retJsonIgnore, true, true);
-            foreach (KeyValuePair<PropertyInfo, dynamic> item in dict) { List.Add(new DataField(this, item)); }
+            Object = obj;
+            foreach (PropertyInfo property in obj.GetType().GetProperties())
+            {
+                if (property.Name != GlobalValues.Id || retId)
+                {
+                    List.Add(new DataField<ModelType>(this, property, Scripts.GetCastedValue(obj, property)));
+                }
+            }
             RaisePropertyChanged(nameof(List));
         }
 
-        public ObservableCollection<DataField> List { get { return list; } set { list = value; RaisePropertyChanged(); } }
+        public ObservableCollection<DataField<ModelType>> List { get { return list; } set { list = value; RaisePropertyChanged(); } }
 
         public List<string> Names
         {
             get
             {
-                List<string> _list = [];
-                foreach (DataField _dataField in List) { _list.Add(_dataField.Name); }
-                return _list;
+                List<string> listNames = [];
+                foreach (DataField<ModelType> dataField in List) { listNames.Add(dataField.Name); }
+                return listNames;
             }
         }
 
@@ -36,19 +42,19 @@ namespace GTRC_Database_Viewer.Models
         {
             get
             {
-                List<dynamic> _list = [];
-                foreach (DataField _dataField in List) { _list.Add(Scripts.CastValue(_dataField.Property, _dataField.Value)); }
-                return _list;
+                List<dynamic> listValues = [];
+                foreach (DataField<ModelType> dataField in List) { listValues.Add(Scripts.CastValue(dataField.Property, dataField.Value)); }
+                return listValues;
             }
         }
 
-        public DataField GetDataFieldByPropertyName(string _name)
+        public DataField<ModelType>? GetDataFieldByPropertyName(string name)
         {
-            foreach (DataField _dataField in List)
+            foreach (DataField<ModelType> dataField in List)
             {
-                if (_dataField.Name == _name) { return _dataField; }
+                if (dataField.Name == name) { return dataField; }
             }
-            return new DataField(null, new KeyValuePair<PropertyInfo, dynamic>());
+            return null;
         }
     }
 }

@@ -23,8 +23,8 @@
                 <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/DataGridStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <FontFamily x:Key="Font_GTRC">pack://application:,,,/GTRC_WPF;component/Fonts/#Metropolis</FontFamily>
-            <DataTemplate DataType="{x:Type viewModel:ApiConSettingsVM}">
-                <view:ApiConSettingsView/>
+            <DataTemplate DataType="{x:Type viewModel:ClientConnectionSettingsVM}">
+                <view:ClientConnectionSettingsView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:DatabaseVM}">
                 <view:DatabaseView/>

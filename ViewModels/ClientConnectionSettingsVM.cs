@@ -5,31 +5,29 @@ using System.Text;
 using System.Windows;
 
 using GTRC_Basics;
-using GTRC_Database_Viewer.Models;
+using GTRC_Database_Client;
 using GTRC_WPF;
 
 namespace GTRC_Database_Viewer.ViewModels
 {
-    public class ApiConSettingsVM : ObservableObject
+    public class ClientConnectionSettingsVM : ObservableObject
     {
         private static readonly string path = GlobalValues.DataDirectory + "config dbapi.json";
 
-        private ApiConSettings? activeConnection;
-        private ApiConSettings? selectedConnection;
-        private List<ApiConSettings> listConSettings = [];
+        private connectionSettings? selectedConSet;
 
-        public ApiConSettingsVM()
+        public ClientConnectionSettingsVM()
         {
-            if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(ApiConSettings.List, Formatting.Indented), Encoding.Unicode); }
-            RestoreSettingsCmd = new UICmd((o) => RestoreSettings());
-            SaveSettingsCmd = new UICmd((o) => SaveSettings());
+            if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(connectionSettings.List, Formatting.Indented), Encoding.Unicode); }
+            RestoreJsonCmd = new UICmd((o) => RestoreJson());
+            SaveJsonCmd = new UICmd((o) => SaveJson());
             AddPresetCmd = new UICmd((o) => AddPreset());
             DelPresetCmd = new UICmd((o) => DelPreset());
-            RestoreSettings();
+            RestoreJson();
         }
-        public ObservableCollection<ApiConSettings> ListConSettings
+        public ObservableCollection<connectionSettings> ListConSettings
         {
-            get { ObservableCollection<ApiConSettings> _list = []; foreach (ApiConSettings apiCon in ApiConSettings.List) { _list.Add(apiCon); } return _list; }
+            get { ObservableCollection<connectionSettings> _list = []; foreach (connectionSettings conSet in connectionSettings.List) { _list.Add(conSet); } return _list; }
             set { }
         }
 
@@ -51,15 +49,12 @@ namespace GTRC_Database_Viewer.ViewModels
             set { }
         }
 
-
-        public ApiConSettings? ActiveConnection { get { return activeConnection; } }
-
-        public ApiConSettings? SelectedConnection
+        public connectionSettings? SelectedConSet
         {
-            get { return selectedConnection; }
+            get { return selectedConSet; }
             set
             {
-                selectedConnection = value;
+                selectedConSet = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(NetworkType));
                 RaisePropertyChanged(nameof(IpAdressType));
@@ -72,10 +67,10 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public NetworkType NetworkType
         {
-            get { return SelectedConnection?.NetworkType ?? NetworkType.IpAdress; }
+            get { return SelectedConSet?.NetworkType ?? NetworkType.IpAdress; }
             set
             {
-                if (SelectedConnection is not null) { SelectedConnection.NetworkType = value; }
+                if (SelectedConSet is not null) { SelectedConSet.NetworkType = value; }
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(VisibilityIpAdressType));
                 RaisePropertyChanged(nameof(VisibilityIpv4));
@@ -85,10 +80,10 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public IpAdressType IpAdressType
         {
-            get { return SelectedConnection?.IpAdressType ?? IpAdressType.IPv4; }
+            get { return SelectedConSet?.IpAdressType ?? IpAdressType.IPv4; }
             set
             {
-                if (SelectedConnection is not null) { SelectedConnection.IpAdressType = value; }
+                if (SelectedConSet is not null) { SelectedConSet.IpAdressType = value; }
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(VisibilityIpv4));
                 RaisePropertyChanged(nameof(VisibilityIpv6));
@@ -97,13 +92,13 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public bool IsActive
         {
-            get { return SelectedConnection?.IsActive ?? false; }
+            get { return SelectedConSet?.IsActive ?? false; }
             set
             {
-                if (SelectedConnection is not null && value != SelectedConnection.IsActive)
+                if (SelectedConSet is not null && value != SelectedConSet.IsActive)
                 {
-                    SelectedConnection.IsActive = value;
-                    UpdateActiveConnection();
+                    SelectedConSet.IsActive = value;
+                    ConfirmActiveConnection();
                     RaisePropertyChanged();
                 }
             }
@@ -113,7 +108,7 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             get
             {
-                if (SelectedConnection?.NetworkType != NetworkType.Localhost) { return Visibility.Visible; }
+                if (SelectedConSet?.NetworkType != NetworkType.Localhost) { return Visibility.Visible; }
                 else { return Visibility.Collapsed; }
             }
         }
@@ -122,7 +117,7 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             get
             {
-                if (VisibilityIpAdressType == Visibility.Visible && SelectedConnection?.IpAdressType == IpAdressType.IPv4) { return Visibility.Visible; }
+                if (VisibilityIpAdressType == Visibility.Visible && SelectedConSet?.IpAdressType == IpAdressType.IPv4) { return Visibility.Visible; }
                 else { return Visibility.Collapsed; }
             }
         }
@@ -136,74 +131,60 @@ namespace GTRC_Database_Viewer.ViewModels
             }
         }
 
-        public void UpdateActiveConnection()
+        public connectionSettings? ConfirmActiveConnection()
         {
-            ApiConSettings? nextActiveConnection = null;
-            foreach (ApiConSettings apiCon in ApiConSettings.List)
-            {
-                if (apiCon.IsActive)
-                {
-                    foreach (ApiConSettings _apiCon in ApiConSettings.List)
-                    {
-                        if (apiCon != _apiCon) { _apiCon.IsActive = false; }
-                    }
-                    nextActiveConnection = apiCon;
-                    break;
-                }
-            }
-            if (nextActiveConnection != activeConnection)
-            {
-                activeConnection = nextActiveConnection;
-            }
-            if (activeConnection is null) { GlobalValues.CurrentLogText = "Not connected to GTRC-Database-API."; }
+            OnConfirmApiConnectionEstablished();
+            connectionSettings? activeConSet = connectionSettings.GetActiveConnectionSettings();
+            if (activeConSet is null) { GlobalValues.CurrentLogText = "Not connected to GTRC-Database-API."; }
             else { GlobalValues.CurrentLogText = "Connection to GTRC-Database-API succeded."; }
+            return activeConSet;
         }
 
-        public void RestoreSettings()
+        public void RestoreJson()
         {
             try
             {
-                ApiConSettings.List.Clear();
-                _ = JsonConvert.DeserializeObject<List<ApiConSettings>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
+                connectionSettings.List.Clear();
+                _ = JsonConvert.DeserializeObject<List<connectionSettings>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
                 GlobalValues.CurrentLogText = "GTRC-Database-API connection settings restored.";
             }
             catch { GlobalValues.CurrentLogText = "Restore GTRC-Database-API connection settings failed!"; }
-            if (ApiConSettings.List.Count == 0) { _ = new ApiConSettings(); }
+            if (connectionSettings.List.Count == 0) { _ = new connectionSettings(); }
             RaisePropertyChanged(nameof(ListConSettings));
-            UpdateActiveConnection();
-            if (ActiveConnection == null) { SelectedConnection = ApiConSettings.List[0]; } else { SelectedConnection = ActiveConnection; }
+            connectionSettings? activeConSet = ConfirmActiveConnection();
+            if (activeConSet is null) { SelectedConSet = connectionSettings.List[0]; } else { SelectedConSet = activeConSet; }
         }
 
-        public void SaveSettings()
+        public void SaveJson()
         {
-            string text = JsonConvert.SerializeObject(ApiConSettings.List, Formatting.Indented);
+            string text = JsonConvert.SerializeObject(connectionSettings.List, Formatting.Indented);
             File.WriteAllText(path, text, Encoding.Unicode);
             GlobalValues.CurrentLogText = "GTRC-Database-API connection settings saved.";
         }
 
         public void AddPreset()
         {
-            ApiConSettings newCon = new();
+            connectionSettings newConSet = new();
             RaisePropertyChanged(nameof(ListConSettings));
-            SelectedConnection = newCon;
+            SelectedConSet = newConSet;
         }
 
         public void DelPreset()
         {
-            if (SelectedConnection is not null && ApiConSettings.List.Count > 1 && !SelectedConnection.IsActive)
+            if (SelectedConSet is not null && connectionSettings.List.Count > 1 && !SelectedConSet.IsActive)
             {
-                ApiConSettings.List.Remove(SelectedConnection);
+                connectionSettings.List.Remove(SelectedConSet);
                 RaisePropertyChanged(nameof(ListConSettings));
-                SelectedConnection = ApiConSettings.List[0];
+                SelectedConSet = connectionSettings.List[0];
             }
         }
 
-        public static event Notify? ApiConnectionEstablished;
+        public static event Notify? ConfirmApiConnectionEstablished;
 
-        public static void OnApiConnectionEstablished() { ApiConnectionEstablished?.Invoke(); }
+        public static void OnConfirmApiConnectionEstablished() { ConfirmApiConnectionEstablished?.Invoke(); }
 
-        public UICmd RestoreSettingsCmd { get; set; }
-        public UICmd SaveSettingsCmd { get; set; }
+        public UICmd RestoreJsonCmd { get; set; }
+        public UICmd SaveJsonCmd { get; set; }
         public UICmd AddPresetCmd { get; set; }
         public UICmd DelPresetCmd { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GTRC_Database_Viewer.Windows.ApiConSettingsView"
+﻿<UserControl x:Class="GTRC_Database_Viewer.Windows.ClientConnectionSettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -28,9 +28,9 @@
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="5">
                     <Label Content="SQL Database"
                            Style="{StaticResource LabelStyle}" Margin="0" HorizontalAlignment="Center"/>
-                    <Button Command="{Binding SaveSettingsCmd}"
+                    <Button Command="{Binding SaveJsonCmd}"
                             Style="{StaticResource SavButtonStyle}" Margin="1,5"/>
-                    <Button Command="{Binding RestoreSettingsCmd}"
+                    <Button Command="{Binding RestoreJsonCmd}"
                             Style="{StaticResource ResButtonStyle}" Margin="1,5"/>
                 </StackPanel>
 
@@ -43,7 +43,7 @@
                     </Grid.ColumnDefinitions>
                     <ComboBox Grid.Column="0"
                               ItemsSource="{Binding ListConSettings, UpdateSourceTrigger=PropertyChanged}"
-                              SelectedValue="{Binding SelectedConnection, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedValue="{Binding SelectedConSet, UpdateSourceTrigger=PropertyChanged}"
                               DisplayMemberPath="Name" Style="{StaticResource ComboBoxStyle}" Cursor="Hand"/>
                     <CheckBox Grid.Column="1"
                             IsChecked="{Binding IsActive}"
@@ -64,10 +64,10 @@
                 <Label Grid.Row="6" Grid.Column="0" Content="IPv6 Address" Style="{StaticResource LabelStyle}" Margin="5" Visibility="{Binding VisibilityIpv6}"/>
                 <Label Grid.Row="7" Grid.Column="0" Content="Port" Style="{StaticResource LabelStyle}" Margin="5"/>
 
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedConnection.Name}" Style="{StaticResource TextBoxStyle}" Margin="10,5"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedConSet.Name}" Style="{StaticResource TextBoxStyle}" Margin="10,5"/>
                 <ComboBox Grid.Row="2" Grid.Column="1" Margin="10,5"
                           ItemsSource="{Binding ProtocolTypes, UpdateSourceTrigger=PropertyChanged}"
-                          SelectedValue="{Binding SelectedConnection.ProtocolType, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding SelectedConSet.ProtocolType, UpdateSourceTrigger=PropertyChanged}"
                           Style="{StaticResource ComboBoxStyle}" Cursor="Hand"/>
                 <ComboBox Grid.Row="3" Grid.Column="1" Margin="10,5"
                           ItemsSource="{Binding NetworkTypes, UpdateSourceTrigger=PropertyChanged}"
@@ -77,9 +77,9 @@
                           ItemsSource="{Binding IpAdressTypes, UpdateSourceTrigger=PropertyChanged}"
                           SelectedValue="{Binding IpAdressType, UpdateSourceTrigger=PropertyChanged}"
                           Style="{StaticResource ComboBoxStyle}" Cursor="Hand" Visibility="{Binding VisibilityIpAdressType}"/>
-                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedConnection.Ipv4}" Style="{StaticResource TextBoxStyle}" Margin="10,5" Visibility="{Binding VisibilityIpv4}"/>
-                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SelectedConnection.Ipv6}" Style="{StaticResource TextBoxStyle}" Margin="10,5" Visibility="{Binding VisibilityIpv6}"/>
-                <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SelectedConnection.Port}" Style="{StaticResource TextBoxStyle}" Margin="10,5"/>
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedConSet.Ipv4}" Style="{StaticResource TextBoxStyle}" Margin="10,5" Visibility="{Binding VisibilityIpv4}"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SelectedConSet.Ipv6}" Style="{StaticResource TextBoxStyle}" Margin="10,5" Visibility="{Binding VisibilityIpv6}"/>
+                <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SelectedConSet.Port}" Style="{StaticResource TextBoxStyle}" Margin="10,5"/>
             </Grid>
         </StackPanel>
     </StackPanel>
