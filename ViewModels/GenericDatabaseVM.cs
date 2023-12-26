@@ -16,7 +16,7 @@ namespace GTRC_Database_Viewer.ViewModels
     public class GenericDatabaseVM<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private string pathJson = GlobalValues.DataDirectory + typeof(ModelType).Name.ToLower() + ".json";
-        private connectionSettings? ConnectionSettings;
+        private ConnectionSettings? ConnectionSettings;
         private HttpRequest<ModelType>? httpRequest;
         private ObservableCollection<DataRow<ModelType>> list = [];
         private DataRow<ModelType>? current;
@@ -26,6 +26,7 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public GenericDatabaseVM()
         {
+            if (!File.Exists(pathJson)) { WriteJson(); }
             AddCmd = new UICmd(async (o) => await Add());
             DelCmd = new UICmd(async (o) => await Del());
             ClearCurrentCmd = new UICmd(async (o) => await ClearCurrent());
@@ -43,7 +44,7 @@ namespace GTRC_Database_Viewer.ViewModels
         public async void Initialize()
         {
             httpRequest = null;
-            ConnectionSettings = connectionSettings.GetActiveConnectionSettings();
+            ConnectionSettings = ConnectionSettings.GetActiveConnectionSettings();
             if (ConnectionSettings is not null) { httpRequest = new(ConnectionSettings); }
             await ClearCurrent();
             await LoadSql();

@@ -14,20 +14,20 @@ namespace GTRC_Database_Viewer.ViewModels
     {
         private static readonly string path = GlobalValues.DataDirectory + "config dbapi.json";
 
-        private connectionSettings? selectedConSet;
+        private ConnectionSettings? selectedConSet;
 
         public ClientConnectionSettingsVM()
         {
-            if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(connectionSettings.List, Formatting.Indented), Encoding.Unicode); }
+            if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(ConnectionSettings.List, Formatting.Indented), Encoding.Unicode); }
             RestoreJsonCmd = new UICmd((o) => RestoreJson());
             SaveJsonCmd = new UICmd((o) => SaveJson());
             AddPresetCmd = new UICmd((o) => AddPreset());
             DelPresetCmd = new UICmd((o) => DelPreset());
             RestoreJson();
         }
-        public ObservableCollection<connectionSettings> ListConSettings
+        public ObservableCollection<ConnectionSettings> ListConSettings
         {
-            get { ObservableCollection<connectionSettings> _list = []; foreach (connectionSettings conSet in connectionSettings.List) { _list.Add(conSet); } return _list; }
+            get { ObservableCollection<ConnectionSettings> _list = []; foreach (ConnectionSettings conSet in ConnectionSettings.List) { _list.Add(conSet); } return _list; }
             set { }
         }
 
@@ -49,7 +49,7 @@ namespace GTRC_Database_Viewer.ViewModels
             set { }
         }
 
-        public connectionSettings? SelectedConSet
+        public ConnectionSettings? SelectedConSet
         {
             get { return selectedConSet; }
             set
@@ -131,10 +131,10 @@ namespace GTRC_Database_Viewer.ViewModels
             }
         }
 
-        public connectionSettings? ConfirmActiveConnection()
+        public ConnectionSettings? ConfirmActiveConnection()
         {
             OnConfirmApiConnectionEstablished();
-            connectionSettings? activeConSet = connectionSettings.GetActiveConnectionSettings();
+            ConnectionSettings? activeConSet = ConnectionSettings.GetActiveConnectionSettings();
             if (activeConSet is null) { GlobalValues.CurrentLogText = "Not connected to GTRC-Database-API."; }
             else { GlobalValues.CurrentLogText = "Connection to GTRC-Database-API succeded."; }
             return activeConSet;
@@ -144,38 +144,38 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             try
             {
-                connectionSettings.List.Clear();
-                _ = JsonConvert.DeserializeObject<List<connectionSettings>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
+                ConnectionSettings.List.Clear();
+                _ = JsonConvert.DeserializeObject<List<ConnectionSettings>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
                 GlobalValues.CurrentLogText = "GTRC-Database-API connection settings restored.";
             }
             catch { GlobalValues.CurrentLogText = "Restore GTRC-Database-API connection settings failed!"; }
-            if (connectionSettings.List.Count == 0) { _ = new connectionSettings(); }
+            if (ConnectionSettings.List.Count == 0) { _ = new ConnectionSettings(); }
             RaisePropertyChanged(nameof(ListConSettings));
-            connectionSettings? activeConSet = ConfirmActiveConnection();
-            if (activeConSet is null) { SelectedConSet = connectionSettings.List[0]; } else { SelectedConSet = activeConSet; }
+            ConnectionSettings? activeConSet = ConfirmActiveConnection();
+            if (activeConSet is null) { SelectedConSet = ConnectionSettings.List[0]; } else { SelectedConSet = activeConSet; }
         }
 
         public void SaveJson()
         {
-            string text = JsonConvert.SerializeObject(connectionSettings.List, Formatting.Indented);
+            string text = JsonConvert.SerializeObject(ConnectionSettings.List, Formatting.Indented);
             File.WriteAllText(path, text, Encoding.Unicode);
             GlobalValues.CurrentLogText = "GTRC-Database-API connection settings saved.";
         }
 
         public void AddPreset()
         {
-            connectionSettings newConSet = new();
+            ConnectionSettings newConSet = new();
             RaisePropertyChanged(nameof(ListConSettings));
             SelectedConSet = newConSet;
         }
 
         public void DelPreset()
         {
-            if (SelectedConSet is not null && connectionSettings.List.Count > 1 && !SelectedConSet.IsActive)
+            if (SelectedConSet is not null && ConnectionSettings.List.Count > 1 && !SelectedConSet.IsActive)
             {
-                connectionSettings.List.Remove(SelectedConSet);
+                ConnectionSettings.List.Remove(SelectedConSet);
                 RaisePropertyChanged(nameof(ListConSettings));
-                SelectedConSet = connectionSettings.List[0];
+                SelectedConSet = ConnectionSettings.List[0];
             }
         }
 
