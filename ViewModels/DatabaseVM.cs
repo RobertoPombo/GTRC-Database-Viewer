@@ -6,7 +6,7 @@ namespace GTRC_Database_Viewer.ViewModels
 {
     public class DatabaseVM : ObservableObject
     {
-        private readonly Dictionary<Type, dynamic> dictGenericDatabaseVM = [];
+        public static readonly Dictionary<Type, dynamic> DictGenericDatabaseVM = [];
         private static Type modelType = GlobalValues.ModelTypeList[0];
         private dynamic genericDatabaseVM;
 
@@ -15,9 +15,9 @@ namespace GTRC_Database_Viewer.ViewModels
             foreach (Type modelType in GlobalValues.ModelTypeList)
             {
                 Type typeDatabaseList = typeof(GenericDatabaseVM<>).MakeGenericType(modelType);
-                dictGenericDatabaseVM[modelType] = Activator.CreateInstance(typeDatabaseList)!;
+                DictGenericDatabaseVM[modelType] = Activator.CreateInstance(typeDatabaseList)!;
             }
-            genericDatabaseVM = dictGenericDatabaseVM[modelType];
+            genericDatabaseVM = DictGenericDatabaseVM[modelType];
         }
 
         public ObservableCollection<KeyValuePair<string, Type>> ModelTypeList
@@ -36,7 +36,7 @@ namespace GTRC_Database_Viewer.ViewModels
             set
             {
                 modelType = value;
-                GenericDatabaseVM = dictGenericDatabaseVM[modelType];
+                GenericDatabaseVM = DictGenericDatabaseVM[modelType];
                 RaisePropertyChanged();
             }
         }

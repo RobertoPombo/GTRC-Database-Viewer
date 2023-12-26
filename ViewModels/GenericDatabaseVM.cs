@@ -139,6 +139,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 else { ResetList([]); }
             }
             else { ResetList([]); }
+            OnPublishList();
         }
 
         public async Task WriteSql()
@@ -168,11 +169,13 @@ namespace GTRC_Database_Viewer.ViewModels
         public void LoadJson()
         {
             ResetList(JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? []);
+            OnPublishList();
         }
 
         public void WriteJson()
         {
             File.WriteAllText(pathJson, JsonConvert.SerializeObject(ObjList, Formatting.Indented), Encoding.Unicode);
+            OnPublishList();
         }
 
         public async Task ClearSql()
@@ -213,6 +216,10 @@ namespace GTRC_Database_Viewer.ViewModels
             if (List.Count > 0) { return List[0]; }
             return null;
         }
+
+        public static event Notify? PublishList;
+
+        public static void OnPublishList() { PublishList?.Invoke(); }
 
         public UICmd AddCmd { get; set; }
         public UICmd DelCmd { get; set; }
