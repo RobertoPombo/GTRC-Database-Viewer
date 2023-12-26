@@ -13,40 +13,21 @@ namespace GTRC_Database_Viewer.Models
 
         public ModelType Object;
 
-        public DataRow(ModelType obj, bool retId)
+        public DataRow(ModelType obj, bool retId, int index = -1)
         {
             Object = obj;
             foreach (PropertyInfo property in obj.GetType().GetProperties())
             {
                 if (property.Name != GlobalValues.Id || retId)
                 {
-                    List.Add(new DataField<ModelType>(this, property, Scripts.GetCastedValue(obj, property)));
+                    List.Add(new DataField<ModelType>(this, property.Name, Scripts.GetCastedValue(obj, property)));
                 }
             }
+            if (index > -1) { List.Add(new DataField<ModelType>(this, "Nr", index)); }
             RaisePropertyChanged(nameof(List));
         }
 
         public ObservableCollection<DataField<ModelType>> List { get { return list; } set { list = value; RaisePropertyChanged(); } }
-
-        public List<string> Names
-        {
-            get
-            {
-                List<string> listNames = [];
-                foreach (DataField<ModelType> dataField in List) { listNames.Add(dataField.Name); }
-                return listNames;
-            }
-        }
-
-        public List<dynamic> Values
-        {
-            get
-            {
-                List<dynamic> listValues = [];
-                foreach (DataField<ModelType> dataField in List) { listValues.Add(Scripts.CastValue(dataField.Property, dataField.Value)); }
-                return listValues;
-            }
-        }
 
         public DataField<ModelType>? GetDataFieldByPropertyName(string name)
         {

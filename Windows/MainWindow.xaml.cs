@@ -37,11 +37,7 @@ namespace GTRC_Database_Viewer.Windows
             List<GTRC_Basics.Models.Color> colors = DatabaseVM.DictGenericDatabaseVM[typeof(GTRC_Basics.Models.Color)].ObjList;
             for (int colorNr = 0; colorNr < colors.Count; colorNr++)
             {
-                SolidColorBrush _color = new(System.Windows.Media.Color.FromArgb(
-                    (byte)colors[colorNr].Alpha,
-                    (byte)colors[colorNr].Red,
-                    (byte)colors[colorNr].Green,
-                    (byte)colors[colorNr].Blue));
+                SolidColorBrush _color = new(Color.FromArgb( colors[colorNr].Alpha, colors[colorNr].Red, colors[colorNr].Green, colors[colorNr].Blue));
                 if (colorNr < WpfColors.List.Count) { WpfColors.List[colorNr] = _color; }
                 else { WpfColors.List.Add(_color); }
             }

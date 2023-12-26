@@ -201,7 +201,7 @@ namespace GTRC_Database_Viewer.ViewModels
         public void ResetList(List<ModelType> _list, int index = 0)
         {
             List.Clear();
-            foreach (ModelType obj in _list) { List.Add(new DataRow<ModelType>(obj, true)); }
+            for (int objNr = 0; objNr < _list.Count; objNr++) { List.Add(new DataRow<ModelType>(_list[objNr], true, objNr + 1)); }
             Selected = SetSelected(index);
         }
 

@@ -14,13 +14,13 @@ namespace GTRC_Database_Viewer.Models
         private string? path;
 
         public DataRow<ModelType>? DataRow;
-        public PropertyInfo Property;
+        //public PropertyInfo Property;
 
-        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic value)
+        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic value)
         {
             DataRow = dataRow;
-            Property = property;
-            Name = Property.Name;
+            //Property = property;
+            Name = propertyName;
             Value = value;
             idList.Clear();
             foreach (var _obj in new List<dynamic>()) // checken, ob PropertyName Id-Prop ist und durch die ensprechende Tabelle iterieren.
