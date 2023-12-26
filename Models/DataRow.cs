@@ -20,7 +20,7 @@ namespace GTRC_Database_Viewer.Models
             {
                 if (property.Name != GlobalValues.Id || retId)
                 {
-                    List.Add(new DataField<ModelType>(this, property.Name, Scripts.GetCastedValue(obj, property)));
+                    List.Add(new DataField<ModelType>(this, property, Scripts.GetCastedValue(obj, property)));
                 }
             }
             if (index > -1) { List.Add(new DataField<ModelType>(this, "Nr", index)); }

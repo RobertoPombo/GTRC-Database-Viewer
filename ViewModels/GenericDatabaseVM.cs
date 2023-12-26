@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -90,7 +91,8 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null && Current is not null)
             {
                 AddDto<ModelType> addDto = new();
-                addDto.Dto.Map(Current.Object);
+                DataRow2Object(Current.Object, Current);
+                addDto.Dto.ReMap(Current.Object);
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(addDto);
                 if (response.Item1 == HttpStatusCode.OK) { await LoadSql(); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
@@ -121,8 +123,10 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null && Current is not null && Selected is not null)
             {
                 UpdateDto<ModelType> updateDto = new();
-                updateDto.Dto.Map(Selected.Object);
-                updateDto.Dto.Map(Current.Object);
+                DataRow2Object(Selected.Object, Selected);
+                DataRow2Object(Current.Object, Current);
+                updateDto.Dto.ReMap(Selected.Object);
+                updateDto.Dto.ReMap(Current.Object);
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
                 if (response.Item1 == HttpStatusCode.OK) { await LoadSql(); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
@@ -215,6 +219,11 @@ namespace GTRC_Database_Viewer.ViewModels
             if (index >= 0 && index < List.Count) { return List[index]; }
             if (List.Count > 0) { return List[0]; }
             return null;
+        }
+
+        public static void DataRow2Object(dynamic _obj, DataRow<ModelType> dataRow)
+        {
+            foreach (DataField<ModelType> dataField in dataRow.List) { dataField.Property?.SetValue(_obj, Scripts.CastValue(dataField.Property, dataField.Value)); }
         }
 
         public static event Notify? PublishList;

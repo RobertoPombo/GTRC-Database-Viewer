@@ -14,12 +14,15 @@ namespace GTRC_Database_Viewer.Models
         private string? path;
 
         public DataRow<ModelType>? DataRow;
-        //public PropertyInfo Property;
+        public PropertyInfo? Property;
 
-        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic value)
+        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic value) { Initialize(dataRow, property.Name, value); Property = property; }
+
+        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic value) { Initialize(dataRow, propertyName, value); }
+
+        public void Initialize(DataRow<ModelType>? dataRow, string propertyName, dynamic value)
         {
             DataRow = dataRow;
-            //Property = property;
             Name = propertyName;
             Value = value;
             idList.Clear();
