@@ -96,6 +96,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(addDto);
                 if (response.Item1 == HttpStatusCode.OK) { await LoadSql(); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
+                else if (response.Item1 == HttpStatusCode.BadRequest || response.Item1 == HttpStatusCode.InternalServerError) { await LoadSql(); }
             }
         }
 
@@ -130,7 +131,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
                 if (response.Item1 == HttpStatusCode.OK) { await LoadSql(); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
-                else if (response.Item1 == HttpStatusCode.NotFound) { await ClearCurrent(); }
+                else if (response.Item1 == HttpStatusCode.NotFound || response.Item1 == HttpStatusCode.InternalServerError) { await ClearCurrent(); }
             }
         }
 
