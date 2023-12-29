@@ -16,13 +16,13 @@ namespace GTRC_Database_Viewer.Windows
             if (!Directory.Exists(GlobalValues.DataDirectory)) { Directory.CreateDirectory(GlobalValues.DataDirectory); }
             GlobalWinValues.SetCultureInfo();
             GlobalWinValues.UpdateWpfColors(this);
-            InitializeNotifications();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.6;
             Height = GlobalWinValues.screenHeight * 0.6;
             Left = ((GlobalWinValues.screenWidth / 2) - (Width / 2)) * 1.9;
             Top = ((GlobalWinValues.screenHeight / 2) - (Height / 2)) * 1.8;
             Closing += CloseWindow;
+            InitializeNotifications();
         }
 
         public void CloseWindow(object? sender, CancelEventArgs e) { }

@@ -158,8 +158,8 @@ namespace GTRC_Database_Viewer.ViewModels
                 {
                     bool found = false;
                     foreach (ModelType oldObj in oldList) { if (newObj.Id == oldObj.Id) { found = true; break; } }
-                    if (found) { UpdateDto<ModelType> updateDto = new(); updateDto.Dto.Map(newObj); await httpRequest.Update(updateDto); }
-                    else { AddDto<ModelType> addDto = new(); addDto.Dto.Map(newObj); await httpRequest.Add(addDto); }
+                    if (found) { UpdateDto<ModelType> updateDto = new(); updateDto.Dto.ReMap(newObj); await httpRequest.Update(updateDto); }
+                    else { AddDto<ModelType> addDto = new(); addDto.Dto.ReMap(newObj); await httpRequest.Add(addDto); }
                 }
                 foreach (ModelType oldObj in oldList)
                 {
