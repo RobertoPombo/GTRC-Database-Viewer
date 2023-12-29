@@ -203,13 +203,11 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public bool UseForceDel() { if (ForceDelete) { ForceDelete = false; return true; } else { return false; } }
 
-
         public async Task ResetLists(List<ModelType> _list, int index = 0)
         {
             ObjList = _list;
             await FilterList(index);
         }
-
 
         public async Task FilterList(int index = 0)
         {
