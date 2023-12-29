@@ -7,33 +7,33 @@
              mc:Ignorable="d">
     <StackPanel Grid.Row="1" Orientation="Vertical">
         <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
-            <Button Command="{Binding GenericDatabaseVM.DelCmd}"
+            <Button Command="{Binding DatabaseTableVM.DelCmd}"
                     Style="{StaticResource DelButtonStyle}" Margin="15,0"/>
-            <Button Command="{Binding GenericDatabaseVM.ClearCurrentCmd}"
+            <Button Command="{Binding DatabaseTableVM.ClearCurrentCmd}"
                     Content="Clear" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
-            <Button Command="{Binding GenericDatabaseVM.UpdateCmd}"
+            <Button Command="{Binding DatabaseTableVM.UpdateCmd}"
                     Content="Update" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
-            <Button Command="{Binding GenericDatabaseVM.AddCmd}"
+            <Button Command="{Binding DatabaseTableVM.AddCmd}"
                     Style="{StaticResource AddButtonStyle}" Margin="15,0"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
-            <Button Content="SQL" Command="{Binding GenericDatabaseVM.LoadSqlCmd}"
+            <Button Content="SQL" Command="{Binding DatabaseTableVM.LoadSqlCmd}"
                     Style="{StaticResource ResTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="SQL" Command="{Binding GenericDatabaseVM.WriteSqlCmd}"
+            <Button Content="SQL" Command="{Binding DatabaseTableVM.WriteSqlCmd}"
                     Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="Json" Command="{Binding GenericDatabaseVM.LoadJsonCmd}"
+            <Button Content="Json" Command="{Binding DatabaseTableVM.LoadJsonCmd}"
                     Style="{StaticResource ResTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="Json" Command="{Binding GenericDatabaseVM.WriteJsonCmd}"
+            <Button Content="Json" Command="{Binding DatabaseTableVM.WriteJsonCmd}"
                     Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
-            <Button Content="SQL" Command="{Binding GenericDatabaseVM.ClearSqlCmd}"
+            <Button Content="SQL" Command="{Binding DatabaseTableVM.ClearSqlCmd}"
                     Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="Json" Command="{Binding GenericDatabaseVM.ClearJsonCmd}"
+            <Button Content="Json" Command="{Binding DatabaseTableVM.ClearJsonCmd}"
                     Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
-            <CheckBox IsChecked="{Binding GenericDatabaseVM.ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+            <CheckBox IsChecked="{Binding DatabaseTableVM.ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
             <Label Content="Delete child objects" Style="{StaticResource LabelStyle}" Margin="5"/>
         </StackPanel>
     </StackPanel>

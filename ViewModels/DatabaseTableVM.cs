@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 
 using GTRC_Basics;
@@ -14,30 +14,33 @@ using GTRC_Basics.Models.DTOs;
 
 namespace GTRC_Database_Viewer.ViewModels
 {
-    public class GenericDatabaseVM<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
+    public class DatabaseTableVM<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private string pathJson = GlobalValues.DataDirectory + typeof(ModelType).Name.ToLower() + ".json";
         private ConnectionSettings? ConnectionSettings;
         private HttpRequest<ModelType>? httpRequest;
-        private ObservableCollection<DataRow<ModelType>> list = [];
+        private ObservableCollection<DataRow<ModelType>> filteredList = [];
         private DataRow<ModelType>? current;
         private DataRow<ModelType>? selected;
         private bool forceDelete = false;
+        private ObservableCollection<DatabaseFilter<ModelType>> filters = [];
         private int selectedId = GlobalValues.NoId;
 
-        public GenericDatabaseVM()
+        public DatabaseTableVM()
         {
             if (!File.Exists(pathJson)) { WriteJson(); }
+            foreach (PropertyInfo property in typeof(ModelType).GetProperties()) { Filters.Add(new(property)); }
+            Filters.Add(new("Nr"));
             AddCmd = new UICmd(async (o) => await Add());
             DelCmd = new UICmd(async (o) => await Del());
             ClearCurrentCmd = new UICmd(async (o) => await ClearCurrent());
             UpdateCmd = new UICmd(async (o) => await Update());
             LoadSqlCmd = new UICmd(async (o) => await LoadSql());
             WriteSqlCmd = new UICmd(async (o) => await WriteSql());
-            LoadJsonCmd = new UICmd((o) => LoadJson());
+            LoadJsonCmd = new UICmd(async (o) => await LoadJson());
             WriteJsonCmd = new UICmd((o) => WriteJson());
             ClearSqlCmd = new UICmd(async (o) => await ClearSql());
-            ClearJsonCmd = new UICmd((o) => ClearJson());
+            ClearJsonCmd = new UICmd(async (o) => await ClearJson());
             ClearFilterCmd = new UICmd((o) => ClearFilter());
             ClientConnectionSettingsVM.ConfirmApiConnectionEstablished += Initialize;
         }
@@ -51,13 +54,9 @@ namespace GTRC_Database_Viewer.ViewModels
             await LoadSql();
         }
 
-        public ObservableCollection<DataRow<ModelType>> List
-        {
-            get { return list; }
-            set { list = value; RaisePropertyChanged(); }
-        }
+        public List<ModelType> ObjList { get; set; } = [];
 
-        public List<ModelType> ObjList { get { List<ModelType> list = []; foreach (DataRow<ModelType> row in List) { list.Add(row.Object); } return list; } }
+        public ObservableCollection<DataRow<ModelType>> FilteredList { get { return filteredList; } set { filteredList = value; RaisePropertyChanged(); } }
 
         public DataRow<ModelType>? Current
         {
@@ -85,6 +84,8 @@ namespace GTRC_Database_Viewer.ViewModels
             get { return forceDelete; }
             set { forceDelete = value; RaisePropertyChanged(); }
         }
+
+        public ObservableCollection<DatabaseFilter<ModelType>> Filters { get { return filters; } set { filters = value; RaisePropertyChanged(); } }
 
         public async Task Add()
         {
@@ -140,10 +141,10 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null)
             {
                 Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetAll();
-                if (response.Item1 == HttpStatusCode.OK) { ResetList(response.Item2); }
-                else { ResetList([]); }
+                if (response.Item1 == HttpStatusCode.OK) { await ResetLists(response.Item2); }
+                else { await ResetLists([]); }
             }
-            else { ResetList([]); }
+            else { await ResetLists([]); }
             OnPublishList();
         }
 
@@ -171,9 +172,9 @@ namespace GTRC_Database_Viewer.ViewModels
             }
         }
 
-        public void LoadJson()
+        public async Task LoadJson()
         {
-            ResetList(JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? []);
+            await ResetLists(JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? []);
             OnPublishList();
         }
 
@@ -185,40 +186,54 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task ClearSql()
         {
-            if (httpRequest is not null) { foreach (DataRow<ModelType> row in List) { await httpRequest.Delete(row.Object.Id, ForceDelete); } UseForceDel(); }
+            if (httpRequest is not null) { foreach (ModelType obj in ObjList) { await httpRequest.Delete(obj.Id, ForceDelete); } UseForceDel(); }
             await LoadSql();
         }
 
-        public void ClearJson()
+        public async Task ClearJson()
         {
             File.WriteAllText(pathJson, JsonConvert.SerializeObject(new List<ModelType>(), Formatting.Indented), Encoding.Unicode);
-            LoadJson();
+            await LoadJson();
         }
 
         public void ClearFilter()
         {
-
+            for (int filterNr = Filters.Count - 1; filterNr >= 0; filterNr--) { Filters[filterNr].Filter = ""; }
         }
 
         public bool UseForceDel() { if (ForceDelete) { ForceDelete = false; return true; } else { return false; } }
 
 
-        public void ResetList(List<ModelType> _list, int index = 0)
+        public async Task ResetLists(List<ModelType> _list, int index = 0)
         {
-            List.Clear();
-            for (int objNr = 0; objNr < _list.Count; objNr++) { List.Add(new DataRow<ModelType>(_list[objNr], true, objNr + 1)); }
+            ObjList = _list;
+            await FilterList(index);
+        }
+
+
+        public async Task FilterList(int index = 0)
+        {
+            FilteredList.Clear();
+            if (httpRequest is not null)
+            {
+                Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetByFilter(DatabaseFilter<ModelType>.GetFilterDtos(Filters));
+                if (response.Item1 == HttpStatusCode.OK)
+                {
+                    for (int objNr = 0; objNr < response.Item2.Count; objNr++) { FilteredList.Add(new DataRow<ModelType>(response.Item2[objNr], true, objNr + 1)); }
+                }
+            }
             Selected = SetSelected(index);
         }
 
         public DataRow<ModelType>? SetSelected(int index = 0)
         {
-            index = Math.Min(Math.Max(0, index), List.Count - 1);
+            index = Math.Min(Math.Max(0, index), FilteredList.Count - 1);
             if (index == 0 && selectedId != GlobalValues.NoId)
             {
-                foreach (DataRow<ModelType> dataRow in List) { if (dataRow.Object.Id == selectedId) { return dataRow; } }
+                foreach (DataRow<ModelType> dataRow in FilteredList) { if (dataRow.Object.Id == selectedId) { return dataRow; } }
             }
-            if (index >= 0 && index < List.Count) { return List[index]; }
-            if (List.Count > 0) { return List[0]; }
+            if (index >= 0 && index < FilteredList.Count) { return FilteredList[index]; }
+            if (FilteredList.Count > 0) { return FilteredList[0]; }
             return null;
         }
 

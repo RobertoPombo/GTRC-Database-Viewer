@@ -9,18 +9,18 @@ namespace GTRC_Database_Viewer.Models
     public class DataField<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private string name = "";
-        private dynamic val = GlobalValues.NoId;
+        private dynamic? value = GlobalValues.NoId;
         private List<KeyValuePair<string, int>> idList = [];
         private string? path;
 
         public DataRow<ModelType>? DataRow;
         public PropertyInfo? Property;
 
-        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic value) { Initialize(dataRow, property.Name, value); Property = property; }
+        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic? val) { Initialize(dataRow, property.Name, val); Property = property; }
 
-        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic value) { Initialize(dataRow, propertyName, value); }
+        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic? val) { Initialize(dataRow, propertyName, val); }
 
-        public void Initialize(DataRow<ModelType>? dataRow, string propertyName, dynamic value)
+        public void Initialize(DataRow<ModelType>? dataRow, string propertyName, dynamic? value)
         {
             DataRow = dataRow;
             Name = propertyName;
@@ -30,12 +30,12 @@ namespace GTRC_Database_Viewer.Models
             {
                 idList.Add(new KeyValuePair<string, int>(_obj.ToString(), _obj.Id));
             }
-            if (Name == "Logo") { Path = Value.ToString(); } else { Path = null; }
+            if (Name == "Logo") { Path = Value?.ToString(); } else { Path = null; }
         }
 
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
 
-        public dynamic Value { get { return val; } set { val = value; RaisePropertyChanged(); } }
+        public dynamic? Value { get { return value; } set { this.value = value; RaisePropertyChanged(); } }
 
         public List<KeyValuePair<string, int>> IdList { get { return idList; } set { idList = value; RaisePropertyChanged(); } }
 

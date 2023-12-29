@@ -26,18 +26,18 @@
                       SelectedValue="{Binding ModelType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       SelectedValuePath="Value" DisplayMemberPath="Key"
                       Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
-            <Button Grid.Column="1" Height="30" Command="{Binding GenericDatabaseVM.ClearFilterCmd}"
+            <Button Grid.Column="1" Height="30" Command="{Binding DatabaseTableVM.ClearFilterCmd}"
                     Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="5,0"/>
         </Grid>
         <!--Property Modification-->
-        <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding GenericDatabaseVM.Current.List}">
+        <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding DatabaseTableVM.Current.List}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" Style="{StaticResource TextBlockStyle}" Margin="5"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding GenericDatabaseVM.Current.List}">
+        <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding DatabaseTableVM.Current.List}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>

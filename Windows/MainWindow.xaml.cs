@@ -16,25 +16,25 @@ namespace GTRC_Database_Viewer.Windows
             if (!Directory.Exists(GlobalValues.DataDirectory)) { Directory.CreateDirectory(GlobalValues.DataDirectory); }
             GlobalWinValues.SetCultureInfo();
             GlobalWinValues.UpdateWpfColors(this);
+            InitializeNotifications();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.6;
             Height = GlobalWinValues.screenHeight * 0.6;
             Left = ((GlobalWinValues.screenWidth / 2) - (Width / 2)) * 1.9;
             Top = ((GlobalWinValues.screenHeight / 2) - (Height / 2)) * 1.8;
             Closing += CloseWindow;
-            InitializeNotifications();
         }
 
-        public void CloseWindow(object? sender, CancelEventArgs e) { }
+        public void CloseWindow(object? sender, CancelEventArgs e) { DatabaseVM.SaveFilters(); }
 
         public void InitializeNotifications()
         {
-            GenericDatabaseVM<GTRC_Basics.Models.Color>.PublishList += UpdateThemeColors;
+            DatabaseTableVM<GTRC_Basics.Models.Color>.PublishList += UpdateThemeColors;
         }
 
         public void UpdateThemeColors()
         {
-            List<GTRC_Basics.Models.Color> colors = DatabaseVM.DictGenericDatabaseVM[typeof(GTRC_Basics.Models.Color)].ObjList;
+            List<GTRC_Basics.Models.Color> colors = DatabaseVM.DictDatabaseTableVM[typeof(GTRC_Basics.Models.Color)].ObjList;
             for (int colorNr = 0; colorNr < colors.Count; colorNr++)
             {
                 SolidColorBrush _color = new(Color.FromArgb( colors[colorNr].Alpha, colors[colorNr].Red, colors[colorNr].Green, colors[colorNr].Blue));
