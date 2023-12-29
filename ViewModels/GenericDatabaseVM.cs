@@ -185,7 +185,7 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task ClearSql()
         {
-            if (httpRequest is not null) { foreach (DataRow<ModelType> row in List) { await httpRequest.Delete(row.Object.Id, UseForceDel()); } }
+            if (httpRequest is not null) { foreach (DataRow<ModelType> row in List) { await httpRequest.Delete(row.Object.Id, ForceDelete); } UseForceDel(); }
             await LoadSql();
         }
 
