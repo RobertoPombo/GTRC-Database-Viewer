@@ -19,7 +19,12 @@ namespace GTRC_Database_Viewer.Models
 
         public DatabaseFilter(PropertyInfo _property) { property = _property; Initialize(property.Name); }
         public DatabaseFilter(string _propertyName) { Initialize(_propertyName); }
-        public void Initialize(string _propertyName) { propertyName = _propertyName; if (propertyName == GlobalValues.Id) { filter = noIdFilter; } }
+        public void Initialize(string _propertyName)
+        {
+            SortCmd = new UICmd((o) => Sort());
+            propertyName = _propertyName;
+            if (propertyName == GlobalValues.Id) { filter = noIdFilter; }
+        }
 
         public string PropertyName { get { return propertyName; } }
 
@@ -80,11 +85,11 @@ namespace GTRC_Database_Viewer.Models
             return objDto;
         }
 
-        public static void Sort()
+        public void Sort()
         {
-
+            if (property is not null) { DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].SortFilteredList(property); }
         }
 
-        [JsonIgnore] public UICmd SortCmd { get; set; } = new UICmd((o) => Sort());
+        [JsonIgnore] public UICmd? SortCmd { get; set; }
     }
 }

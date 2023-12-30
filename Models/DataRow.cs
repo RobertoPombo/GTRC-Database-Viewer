@@ -10,6 +10,7 @@ namespace GTRC_Database_Viewer.Models
     public class DataRow<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private ObservableCollection<DataField<ModelType>> list = [];
+        private int indexNr = 0;
 
         public ModelType Object;
 
@@ -23,7 +24,7 @@ namespace GTRC_Database_Viewer.Models
                     List.Add(new DataField<ModelType>(this, property, property.GetValue(obj)));
                 }
             }
-            if (index > -1) { List.Add(new DataField<ModelType>(this, "Nr", index)); }
+            if (index > -1) { indexNr = List.Count; List.Add(new DataField<ModelType>(this, nameof(Nr), index)); }
             RaisePropertyChanged(nameof(List));
         }
 
@@ -37,5 +38,7 @@ namespace GTRC_Database_Viewer.Models
             }
             return null;
         }
+
+        public dynamic Nr { get { return List[indexNr].Value ?? int.MaxValue; } set { List[indexNr].Value = value; } }
     }
 }

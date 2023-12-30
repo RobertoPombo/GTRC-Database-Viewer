@@ -25,6 +25,7 @@ namespace GTRC_Database_Viewer.ViewModels
         private bool forceDelete = false;
         private ObservableCollection<DatabaseFilter<ModelType>> filters = [];
         private int selectedId = GlobalValues.NoId;
+        private SortState sortState = new();
 
         public DatabaseTableVM()
         {
@@ -221,6 +222,31 @@ namespace GTRC_Database_Viewer.ViewModels
                 }
             }
             Selected = SetSelected(index);
+        }
+
+        public void SortFilteredList(PropertyInfo property)
+        {
+            bool stringCompare = true;
+            if (GlobalValues.numericalTypes.Contains(property.PropertyType)) { stringCompare = false; }
+            if (sortState.Property == property) { sortState.SortAscending = !sortState.SortAscending; }
+            else { sortState = new SortState { Property = property }; }
+            for (int rowNr1 = 0; rowNr1 < FilteredList.Count - 1; rowNr1++)
+            {
+                for (int rowNr2 = rowNr1 + 1; rowNr2 < FilteredList.Count; rowNr2++)
+                {
+                    bool isAscending;
+                    dynamic? val1 = Scripts.GetCastedValue(FilteredList[rowNr1].Object, property);
+                    dynamic? val2 = Scripts.GetCastedValue(FilteredList[rowNr2].Object, property);
+                    if (stringCompare) { isAscending = String.Compare(val1?.ToString(), val2?.ToString()) < 0; }
+                    else { isAscending = val1 < val2; }
+                    if ((sortState.SortAscending && !isAscending) || (!sortState.SortAscending && isAscending))
+                    {
+                        (FilteredList[rowNr1], FilteredList[rowNr2]) = (FilteredList[rowNr2], FilteredList[rowNr1]);
+                        (FilteredList[rowNr1].Nr, FilteredList[rowNr2].Nr) = (FilteredList[rowNr2].Nr, FilteredList[rowNr1].Nr);
+                    }
+                }
+            }
+            RaisePropertyChanged(nameof(FilteredList));
         }
 
         public DataRow<ModelType>? SetSelected(int index = 0)
