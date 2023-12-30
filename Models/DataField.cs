@@ -10,13 +10,13 @@ namespace GTRC_Database_Viewer.Models
     {
         private string name = "";
         private dynamic? value = GlobalValues.NoId;
-        private List<KeyValuePair<string, int>> idList = [];
+        private List<string> listDropdown = [];
         private string? path;
 
         public DataRow<ModelType>? DataRow;
         public PropertyInfo? Property;
 
-        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic? val) { Initialize(dataRow, property.Name, val); Property = property; }
+        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic? val) { Property = property; Initialize(dataRow, property.Name, val); }
 
         public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic? val) { Initialize(dataRow, propertyName, val); }
 
@@ -25,19 +25,31 @@ namespace GTRC_Database_Viewer.Models
             DataRow = dataRow;
             Name = propertyName;
             Value = value;
-            idList.Clear();
-            foreach (var _obj in new List<dynamic>()) // checken, ob PropertyName Id-Prop ist und durch die ensprechende Tabelle iterieren.
+            listDropdown.Clear();
+            if (Property is not null && Property.PropertyType.IsEnum)
             {
-                idList.Add(new KeyValuePair<string, int>(_obj.ToString(), _obj.Id));
+                foreach (var enumType in Enum.GetValues(Property.PropertyType))
+                {
+                    listDropdown.Add(enumType.ToString() ?? string.Empty);
+                }
+                Value = value?.ToString();
             }
-            if (Name == "Logo") { Path = Value?.ToString(); } else { Path = null; }
+            else if (false) // für Object-Ids
+            {
+
+            }
+            else if (Name == "Logo") { Path = Value?.ToString(); } else { Path = null; }
         }
 
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
 
         public dynamic? Value { get { return value; } set { this.value = value; RaisePropertyChanged(); } }
 
-        public List<KeyValuePair<string, int>> IdList { get { return idList; } set { idList = value; RaisePropertyChanged(); } }
+        public List<string> ListDropdown
+        {
+            get { return listDropdown; }
+            set { listDropdown = value; RaisePropertyChanged(); }
+        }
 
         public dynamic? Path { get { return path; } set { path = value; RaisePropertyChanged(); } }
     }

@@ -43,13 +43,13 @@
                     <Grid>
                         <TextBox x:Name="InputText" Text="{Binding Value, UpdateSourceTrigger=LostFocus}"
                                  Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Margin="5"/>
-                        <ComboBox x:Name="ComboText" SelectedValuePath="Value" DisplayMemberPath="Key"
-                                  ItemsSource="{Binding IdList, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
+                        <ComboBox x:Name="ComboText"
+                                  ItemsSource="{Binding ListDropdown, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
                                   SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                   Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
                     </Grid>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IdList.Count}" Value="0">
+                        <DataTrigger Binding="{Binding ListDropdown.Count}" Value="0">
                             <Setter TargetName="InputText" Property="Visibility" Value="Visible"/>
                             <Setter TargetName="ComboText" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
