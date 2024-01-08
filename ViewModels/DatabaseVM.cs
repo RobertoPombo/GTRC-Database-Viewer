@@ -15,6 +15,8 @@ namespace GTRC_Database_Viewer.ViewModels
         public static readonly Dictionary<Type, dynamic> DictDatabaseTableVM = [];
         private static Type modelType = GlobalValues.ModelTypeList[0];
         private dynamic databaseTableVM;
+        private bool forceDelete = false;
+        private bool acceptNewId = true;
 
         public DatabaseVM()
         {
@@ -55,6 +57,18 @@ namespace GTRC_Database_Viewer.ViewModels
             set { databaseTableVM = value; RaisePropertyChanged(); }
         }
 
+        public bool ForceDelete
+        {
+            get { return forceDelete; }
+            set { forceDelete = value; RaisePropertyChanged(); }
+        }
+
+        public bool AcceptNewId
+        {
+            get { return acceptNewId; }
+            set { acceptNewId = value; RaisePropertyChanged(); }
+        }
+
         public void RestoreFilters()
         {
             try
@@ -93,6 +107,18 @@ namespace GTRC_Database_Viewer.ViewModels
             string text = JsonConvert.SerializeObject(filterList, Formatting.Indented);
             File.WriteAllText(pathJson, text, Encoding.Unicode);
             GlobalValues.CurrentLogText = "Filter settings saved.";
+        }
+
+        public static bool UseForceDelete(bool keepValue=false)
+        {
+            if (MainVM.Instance?.DatabaseVM?.ForceDelete ?? false) { if (!keepValue) { MainVM.Instance.DatabaseVM.ForceDelete = false; } return true; }
+            else { return false; }
+        }
+
+        public static bool UseAcceptNewId(bool keepValue = false)
+        {
+            if (MainVM.Instance?.DatabaseVM?.AcceptNewId ?? true) { return true; }
+            else { if (!keepValue) { MainVM.Instance.DatabaseVM.AcceptNewId = true; } return false; }
         }
     }
 }
