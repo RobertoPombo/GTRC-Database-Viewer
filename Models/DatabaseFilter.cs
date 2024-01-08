@@ -13,7 +13,7 @@ namespace GTRC_Database_Viewer.Models
     public class DatabaseFilter<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private static readonly string noIdFilter = "-1";
-        private PropertyInfo? property;
+        private readonly PropertyInfo? property;
         private string propertyName = "";
         private string filter = string.Empty;
 
@@ -25,6 +25,8 @@ namespace GTRC_Database_Viewer.Models
             propertyName = _propertyName;
             if (propertyName == GlobalValues.Id) { filter = noIdFilter; }
         }
+
+        [JsonIgnore] public PropertyInfo? Property { get { return property; } }
 
         public string PropertyName { get { return propertyName; } }
 

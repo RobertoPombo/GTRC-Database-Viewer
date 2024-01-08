@@ -1,9 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using System.Reflection;
-
-using GTRC_Basics;
+﻿using GTRC_Basics;
 using GTRC_Basics.Models.Common;
+using GTRC_Basics.Models.DTOs;
+using GTRC_Database_Viewer.ViewModels;
 using GTRC_WPF;
+using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Windows.Media.Media3D;
 
 namespace GTRC_Database_Viewer.Models
 {
@@ -13,15 +15,27 @@ namespace GTRC_Database_Viewer.Models
         private int indexNr = 0;
 
         public ModelType Object;
+        public dynamic? ObjectDto;
 
-        public DataRow(ModelType obj, bool retId, int index = -1)
+        public DataRow(ModelType obj, bool retFull, int index = -1)
         {
             Object = obj;
-            foreach (PropertyInfo property in obj.GetType().GetProperties())
+            ObjectDto = Mapper<ModelType>.MapToFull(obj);
+            if (retFull)
             {
-                if (property.Name != GlobalValues.Id || retId)
+                foreach (DatabaseFilter<ModelType> filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters)
                 {
-                    List.Add(new DataField<ModelType>(this, property, property.GetValue(obj)));
+                    if (filter.Property is not null) { List.Add(new DataField<ModelType>(this, filter.Property, filter.Property?.GetValue(ObjectDto))); }
+                }
+            }
+            else
+            {
+                foreach (PropertyInfo property in Object.GetType().GetProperties())
+                {
+                    if (property.Name != GlobalValues.Id || retFull)
+                    {
+                        List.Add(new DataField<ModelType>(this, property, property.GetValue(Object)));
+                    }
                 }
             }
             if (index > -1) { indexNr = List.Count; List.Add(new DataField<ModelType>(this, nameof(Nr), index)); }

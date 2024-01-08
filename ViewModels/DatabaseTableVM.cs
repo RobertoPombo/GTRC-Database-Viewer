@@ -30,7 +30,15 @@ namespace GTRC_Database_Viewer.ViewModels
         public DatabaseTableVM()
         {
             if (!File.Exists(pathJson)) { WriteJson(); }
-            foreach (PropertyInfo property in typeof(ModelType).GetProperties()) { Filters.Add(new(property)); }
+            foreach (PropertyInfo property in GlobalValues.DictDtoModels[typeof(ModelType)][DtoType.Full].GetProperties()) { Filters.Add(new(property)); }
+            int newIndex = 0;
+            for (int propertyIndex = 0; propertyIndex < Filters.Count; propertyIndex++)
+            {
+                foreach (PropertyInfo property in typeof(ModelType).GetProperties())
+                {
+                    if (Filters[propertyIndex].PropertyName == property.Name) { Filters.Move(propertyIndex, newIndex); newIndex++; break; }
+                }
+            }
             Filters.Add(new("Nr"));
             AddCmd = new UICmd(async (o) => await Add());
             DelCmd = new UICmd(async (o) => await Del());
@@ -175,7 +183,7 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task LoadJson()
         {
-            await ResetLists(JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? []);
+            await ResetLists(JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? [], filter: false);
             OnPublishList();
         }
 
@@ -204,21 +212,28 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public bool UseForceDel() { if (ForceDelete) { ForceDelete = false; return true; } else { return false; } }
 
-        public async Task ResetLists(List<ModelType> _list, int index = 0)
+        public async Task ResetLists(List<ModelType> _list, int index = 0, bool filter = true)
         {
             ObjList = _list;
-            await FilterList(index);
+            await FilterList(index, filter);
         }
 
-        public async Task FilterList(int index = 0)
+        public async Task FilterList(int index = 0, bool filter=true)
         {
             FilteredList.Clear();
-            if (httpRequest is not null)
+            if (httpRequest is not null && filter)
             {
                 Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetByFilter(DatabaseFilter<ModelType>.GetFilterDtos(Filters));
                 if (response.Item1 == HttpStatusCode.OK)
                 {
                     for (int objNr = 0; objNr < response.Item2.Count; objNr++) { FilteredList.Add(new DataRow<ModelType>(response.Item2[objNr], true, objNr + 1)); }
+                }
+            }
+            else if (!filter)
+            {
+                for (int objNr = 0; objNr < ObjList.Count; objNr++)
+                {
+                    FilteredList.Add(new DataRow<ModelType>(ObjList[objNr], true, objNr + 1));
                 }
             }
             Selected = SetSelected(index);
@@ -235,11 +250,11 @@ namespace GTRC_Database_Viewer.ViewModels
                 for (int rowNr2 = rowNr1 + 1; rowNr2 < FilteredList.Count; rowNr2++)
                 {
                     bool isAscending;
-                    dynamic? val1 = Scripts.GetCastedValue(FilteredList[rowNr1].Object, property);
-                    dynamic? val2 = Scripts.GetCastedValue(FilteredList[rowNr2].Object, property);
-                    if (stringCompare) { isAscending = String.Compare(val1?.ToString(), val2?.ToString()) < 0; }
-                    else { isAscending = val1 < val2; }
-                    if ((sortState.SortAscending && !isAscending) || (!sortState.SortAscending && isAscending))
+                    dynamic? val1 = Scripts.GetCastedValue(FilteredList[rowNr1].ObjectDto, property);
+                    dynamic? val2 = Scripts.GetCastedValue(FilteredList[rowNr2].ObjectDto, property);
+                    if (stringCompare) { isAscending = String.Compare(val1?.ToString(), val2?.ToString()) <= 0; }
+                    else { isAscending = val1 <= val2; }
+                    if (sortState.SortAscending != isAscending)
                     {
                         (FilteredList[rowNr1], FilteredList[rowNr2]) = (FilteredList[rowNr2], FilteredList[rowNr1]);
                         (FilteredList[rowNr1].Nr, FilteredList[rowNr2].Nr) = (FilteredList[rowNr2].Nr, FilteredList[rowNr1].Nr);
