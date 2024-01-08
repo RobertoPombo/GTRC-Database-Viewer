@@ -1,18 +1,18 @@
-﻿using GTRC_Basics;
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
+
+using GTRC_Basics;
 using GTRC_Basics.Models.Common;
 using GTRC_Basics.Models.DTOs;
 using GTRC_Database_Viewer.ViewModels;
 using GTRC_WPF;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using System.Windows.Media.Media3D;
 
 namespace GTRC_Database_Viewer.Models
 {
     public class DataRow<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private ObservableCollection<DataField<ModelType>> list = [];
-        private int indexNr = 0;
+        private readonly int indexNr = 0;
 
         public ModelType Object;
         public dynamic? ObjectDto;

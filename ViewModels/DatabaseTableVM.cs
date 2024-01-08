@@ -101,8 +101,8 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null && Current is not null)
             {
                 AddDto<ModelType> addDto = new();
-                DataRow2Object(Current.Object, Current);
-                addDto.Dto.ReMap(Current.Object);
+                DataRow2Object(Current.ObjectDto, Current);
+                addDto.Dto.ReMap(Current.ObjectDto);
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(addDto);
                 if (response.Item1 == HttpStatusCode.OK) { await LoadSql(); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
@@ -134,14 +134,35 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null && Current is not null && Selected is not null)
             {
                 UpdateDto<ModelType> updateDto = new();
-                DataRow2Object(Selected.Object, Selected);
-                DataRow2Object(Current.Object, Current);
-                updateDto.Dto.ReMap(Selected.Object);
-                updateDto.Dto.ReMap(Current.Object);
+                DataRow2Object(Selected.ObjectDto, Selected);
+                DataRow2Object(Current.ObjectDto, Current);
+                updateDto.Dto.ReMap(Selected.ObjectDto);
+                updateDto.Dto.ReMap(Current.ObjectDto);
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
-                if (response.Item1 == HttpStatusCode.OK) { await LoadSql(); }
+                if (response.Item1 == HttpStatusCode.OK) { await GetById(Selected.Object.Id); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
                 else if (response.Item1 == HttpStatusCode.NotFound || response.Item1 == HttpStatusCode.InternalServerError) { await ClearCurrent(); }
+            }
+        }
+
+        public async Task GetById(int id)
+        {
+            if (httpRequest is not null)
+            {
+                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.GetById(id);
+                if (response.Item1 == HttpStatusCode.OK && response.Item2 is not null)
+                {
+                    for (int modelNr = 0; modelNr < ObjList.Count; modelNr++)
+                    {
+                        if (ObjList[modelNr].Id == id)
+                        {
+                            ObjList[modelNr] = response.Item2;
+                            await ResetLists(ObjList);
+                            OnPublishList();
+                            break;
+                        }
+                    }
+                }
             }
         }
 
