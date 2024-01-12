@@ -3,6 +3,7 @@ using System.Windows.Media;
 
 using GTRC_Basics;
 using GTRC_Basics.Models.Common;
+using GTRC_Database_Viewer.ViewModels;
 using GTRC_WPF;
 
 namespace GTRC_Database_Viewer.Models
@@ -11,7 +12,7 @@ namespace GTRC_Database_Viewer.Models
     {
         private string name = "";
         private dynamic? value = GlobalValues.NoId;
-        private List<string> listDropdown = [];
+        private List<dynamic> listDropdown = [];
         private string? path;
 
         public DataRow<ModelType>? DataRow;
@@ -29,6 +30,7 @@ namespace GTRC_Database_Viewer.Models
             listDropdown.Clear();
             if (Property is not null)
             {
+                Type? TypeForeignId = GlobalValues.GetTypeForeignId(Name);
                 if (Property.PropertyType.IsEnum)
                 {
                     foreach (var enumType in Enum.GetValues(Property.PropertyType))
@@ -37,13 +39,14 @@ namespace GTRC_Database_Viewer.Models
                     }
                     Value = value?.ToString();
                 }
-                else if (false) // für Object-Ids
+                else if (TypeForeignId is not null)
                 {
-
+                    var _list = DatabaseVM.DictDatabaseTableVM[TypeForeignId].ObjList;
+                    foreach (dynamic obj in _list) { listDropdown.Add(obj); }
                 }
                 else if (Property.PropertyType == typeof(System.Drawing.Color))
                 {
-                    Value = new SolidColorBrush(System.Windows.Media.Color.FromArgb(value?.A ?? 0, value?.R ?? 0, value?.G ?? 0, value?.B ?? 0));
+                    Value = new SolidColorBrush(Color.FromArgb(value?.A ?? 0, value?.R ?? 0, value?.G ?? 0, value?.B ?? 0));
                 }
                 else if (Name == "Logo") { Path = Value?.ToString(); }
             }
@@ -54,7 +57,7 @@ namespace GTRC_Database_Viewer.Models
 
         public dynamic? Value { get { return value; } set { this.value = value; RaisePropertyChanged(); } }
 
-        public List<string> ListDropdown
+        public List<dynamic> ListDropdown
         {
             get { return listDropdown; }
             set { listDropdown = value; RaisePropertyChanged(); }

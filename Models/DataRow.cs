@@ -13,29 +13,26 @@ namespace GTRC_Database_Viewer.Models
     {
         private ObservableCollection<DataField<ModelType>> list = [];
         private readonly int indexNr = 0;
-
         public ModelType Object;
-        public dynamic? ObjectDto;
 
         public DataRow(ModelType obj, bool retFull, int index = -1)
         {
             Object = obj;
-            ObjectDto = Mapper<ModelType>.MapToFull(obj);
             if (retFull)
             {
+                FullDto<ModelType> dto = new() { Dto = Mapper<ModelType>.Model2FullDto(Object) };
                 foreach (DatabaseFilter<ModelType> filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters)
                 {
-                    if (filter.Property is not null) { List.Add(new DataField<ModelType>(this, filter.Property, filter.Property?.GetValue(ObjectDto))); }
+                    if (filter.Property is not null) { List.Add(new DataField<ModelType>(this, filter.Property, filter.Property?.GetValue(dto.Dto))); }
                 }
             }
             else
             {
-                foreach (PropertyInfo property in Object.GetType().GetProperties())
+                AddDto<ModelType> dto = new();
+                dto.Dto.Model2Dto(Object);
+                foreach (PropertyInfo property in GlobalValues.DictDtoModels[typeof(ModelType)][DtoType.Add].GetProperties())
                 {
-                    if (property.Name != GlobalValues.Id || retFull)
-                    {
-                        List.Add(new DataField<ModelType>(this, property, property.GetValue(Object)));
-                    }
+                    List.Add(new DataField<ModelType>(this, property, property.GetValue(dto.Dto)));
                 }
             }
             if (index > -1) { indexNr = List.Count; List.Add(new DataField<ModelType>(this, nameof(Nr), index)); }
@@ -54,5 +51,17 @@ namespace GTRC_Database_Viewer.Models
         }
 
         public dynamic Nr { get { return List[indexNr].Value ?? int.MaxValue; } set { List[indexNr].Value = value; } }
+
+        public void UpdateObject()
+        {
+            foreach (DataField<ModelType> dataField in List)
+            {
+                PropertyInfo? propertyModel = typeof(ModelType).GetProperty(dataField.Property?.Name ?? string.Empty);
+                if (dataField.Property is not null && propertyModel is not null)
+                {
+                    propertyModel.SetValue(Object, Scripts.CastValue(dataField.Property, dataField.Value));
+                }
+            }
+        }
     }
 }

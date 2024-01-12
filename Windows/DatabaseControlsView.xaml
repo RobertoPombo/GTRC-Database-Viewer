@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:GTRC_Database_Viewer.Windows"
              mc:Ignorable="d">
     <StackPanel Grid.Row="1" Orientation="Vertical">
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,15">
             <Button Command="{Binding DatabaseTableVM.DelCmd}"
                     Style="{StaticResource DelButtonStyle}" Margin="15,0"/>
             <Button Command="{Binding DatabaseTableVM.ClearCurrentCmd}"
@@ -16,7 +16,7 @@
             <Button Command="{Binding DatabaseTableVM.AddCmd}"
                     Style="{StaticResource AddButtonStyle}" Margin="15,0"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0">
             <Button Content="SQL" Command="{Binding DatabaseTableVM.WriteSqlCmd}"
                     Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
             <Button Content="SQL" Command="{Binding DatabaseTableVM.LoadSqlCmd}"
@@ -24,7 +24,7 @@
             <Button Content="SQL" Command="{Binding DatabaseTableVM.ClearSqlCmd}"
                     Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5,0,10">
             <Button Content="Json" Command="{Binding DatabaseTableVM.WriteJsonCmd}"
                     Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
             <Button Content="Json" Command="{Binding DatabaseTableVM.LoadJsonCmd}"
@@ -32,21 +32,25 @@
             <Button Content="Json" Command="{Binding DatabaseTableVM.ClearJsonCmd}"
                     Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="5">
             <Button Content="Json previous db version" Command="{Binding DatabaseTableVM.ConvertJsonCmd}"
                     Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0">
             <ComboBox ItemsSource="{Binding DatabaseTableVM.DbVersionList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       SelectedValue="{Binding DatabaseTableVM.DbVersion, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,0" Cursor="Hand"/>
             <Button Command="{Binding DatabaseTableVM.LoadDbVersionListCmd}"
                     Style="{StaticResource ResButtonStyle}" Margin="1,8"/>
             <Label Foreground="{Binding DatabaseTableVM.StateIdComparison}" Style="{StaticResource StatusLightLabelStyle}" Margin="5,0" Cursor=""/>
+            <Button Content="SQL" Command="{Binding DatabaseTableVM.ExportVersionJsonToSqlCmd}"
+                    Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="0"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,15,0,0">
             <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
             <Label Content="Delete child objects" Style="{StaticResource LabelStyle}" Margin="5"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5">
+        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0">
             <CheckBox IsChecked="{Binding AcceptNewId}" Style="{StaticResource SwitchCheckBoxStyle}"/>
             <Label Content="Accept new Id when writing to SQL" Style="{StaticResource LabelStyle}" Margin="5"/>
         </StackPanel>

@@ -45,6 +45,7 @@
                                  Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Margin="5"/>
                         <ComboBox x:Name="ComboText"
                                   ItemsSource="{Binding ListDropdown, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
+                                  SelectedValuePath="Id"
                                   SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                   Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
                     </Grid>

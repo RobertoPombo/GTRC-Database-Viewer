@@ -58,6 +58,7 @@ namespace GTRC_Database_Viewer.ViewModels
             ClearJsonCmd = new UICmd((o) => ClearJson());
             ConvertJsonCmd = new UICmd((o) => ConvertJson());
             LoadDbVersionListCmd = new UICmd((o) => LoadDbVersionList());
+            ExportVersionJsonToSqlCmd = new UICmd((o) => ExportVersionJsonToSql());
             ClearFilterCmd = new UICmd((o) => ClearFilter());
             ClientConnectionSettingsVM.ConfirmApiConnectionEstablished += Initialize;
             DatabaseTableVM<GTRC_Basics.Models.Color>.PublishList += UpdateStateColors;
@@ -122,11 +123,12 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             if (httpRequest is not null && Current is not null)
             {
-                AddDto<ModelType> addDto = new();
-                DataRow2Object(Current.ObjectDto, Current);
-                addDto.Dto.ReMap(Current.ObjectDto);
-                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(addDto);
+                Current.UpdateObject();
+                AddDto<ModelType> dto = new();
+                dto.Dto.Model2Dto(Current.Object);
+                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(dto);
                 if (response.Item1 == HttpStatusCode.OK) { await GetByUniqProps(Current.Object); }
+                else if (response.Item1 == HttpStatusCode.NotFound) { _ = LoadSql(); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
             }
         }
@@ -135,7 +137,7 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             if (httpRequest is not null)
             {
-                HttpStatusCode response = await httpRequest.Delete(Selected?.Object?.Id ?? GlobalValues.NoId, DatabaseVM.UseForceDelete());
+                HttpStatusCode response = await httpRequest.Delete(Selected?.Object.Id ?? GlobalValues.NoId, DatabaseVM.UseForceDelete());
                 if (response == HttpStatusCode.OK) { _ = LoadSql(); }
             }
         }
@@ -154,11 +156,11 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             if (httpRequest is not null && Current is not null && Selected is not null)
             {
+                Selected.UpdateObject();
+                Current.UpdateObject();
                 UpdateDto<ModelType> updateDto = new();
-                DataRow2Object(Selected.ObjectDto, Selected);
-                DataRow2Object(Current.ObjectDto, Current);
-                updateDto.Dto.ReMap(Selected.ObjectDto);
-                updateDto.Dto.ReMap(Current.ObjectDto);
+                updateDto.Dto.Model2Dto(Selected.Object);
+                updateDto.Dto.Model2Dto(Current.Object);
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
                 if (response.Item1 == HttpStatusCode.OK) { await GetById(Selected.Object.Id); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
@@ -192,7 +194,7 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null)
             {
                 UniqPropsDto<ModelType> dto = new();
-                dto.Dto.ReMap(obj);
+                dto.Dto.Model2Dto(obj);
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.GetByUniqProps(dto);
                 if (response.Item1 == HttpStatusCode.OK && response.Item2 is not null)
                 {
@@ -201,6 +203,7 @@ namespace GTRC_Database_Viewer.ViewModels
                     _ = ResetLists(ObjList);
                     OnPublishList();
                 }
+                else { _ = LoadSql(); }
             }
         }
 
@@ -233,7 +236,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 {
                     bool found = false;
                     foreach (ModelType oldObj in oldList) { if (newObj.Id == oldObj.Id) { found = true; break; } }
-                    if (found) { UpdateDto<ModelType> updateDto = new(); updateDto.Dto.ReMap(newObj); await httpRequest.Update(updateDto); }
+                    if (found) { UpdateDto<ModelType> updateDto = new(); updateDto.Dto.Model2Dto(newObj); await httpRequest.Update(updateDto); }
                     else { int deletedId = GlobalValues.NoId; while (deletedId < newObj.Id) { deletedId = await AddSqlForceId(newObj); } }
                 }
                 _ = LoadSql();
@@ -274,6 +277,12 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             _ = ResetLists(GetListPreviousDbVersion(), filter: false);
             OnPublishList();
+        }
+
+        public void ExportVersionJsonToSql()
+        {
+            ConvertJson();
+            _ = WriteSql();
         }
 
         public void ClearFilter()
@@ -320,8 +329,8 @@ namespace GTRC_Database_Viewer.ViewModels
                 for (int rowNr2 = rowNr1 + 1; rowNr2 < FilteredList.Count; rowNr2++)
                 {
                     bool isAscending;
-                    dynamic? val1 = Scripts.GetCastedValue(FilteredList[rowNr1].ObjectDto, property);
-                    dynamic? val2 = Scripts.GetCastedValue(FilteredList[rowNr2].ObjectDto, property);
+                    dynamic? val1 = Scripts.GetCastedValue(Mapper<ModelType>.Model2FullDto(FilteredList[rowNr1].Object), property);
+                    dynamic? val2 = Scripts.GetCastedValue(Mapper<ModelType>.Model2FullDto(FilteredList[rowNr2].Object), property);
                     if (stringCompare) { isAscending = String.Compare(val1?.ToString(), val2?.ToString()) <= 0; }
                     else { isAscending = val1 <= val2; }
                     if (sortState.SortAscending != isAscending)
@@ -344,11 +353,6 @@ namespace GTRC_Database_Viewer.ViewModels
             if (index >= 0 && index < FilteredList.Count) { return FilteredList[index]; }
             if (FilteredList.Count > 0) { return FilteredList[0]; }
             return null;
-        }
-
-        public static void DataRow2Object(dynamic _obj, DataRow<ModelType> dataRow)
-        {
-            foreach (DataField<ModelType> dataField in dataRow.List) { dataField.Property?.SetValue(_obj, Scripts.CastValue(dataField.Property, dataField.Value)); }
         }
 
         public void LoadDbVersionList()
@@ -403,52 +407,51 @@ namespace GTRC_Database_Viewer.ViewModels
         public async Task SetStateIdComparison()
         {
             if (DbVersion is null || httpRequest is null) { StateIdComparison = GlobalWinValues.StateOff; return; }
-            else
+            List<ModelType> oldList = GetListPreviousDbVersion();
+            if (oldList.Count == 0) { StateIdComparison = GlobalWinValues.StateOff; return; }
+            foreach (ModelType oldObj in oldList)
             {
-                List<ModelType> oldList = GetListPreviousDbVersion();
-                if (oldList.Count == 0) { StateIdComparison = GlobalWinValues.StateOff; return; }
-                foreach (ModelType oldObj in oldList)
+                UniqPropsDto<ModelType> uniqPropsDto = new();
+                uniqPropsDto.Dto.Model2Dto(oldObj);
+                if (DbVersion is null || httpRequest is null) { StateIdComparison = GlobalWinValues.StateOff; return; }
+                Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
+                if (getResponse.Item1 != HttpStatusCode.OK || getResponse.Item2 is null || getResponse.Item2.Id != oldObj.Id)
                 {
-                    UniqPropsDto<ModelType> uniqPropsDto = new();
-                    uniqPropsDto.Dto.ReMap(oldObj);
-                    Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
-                    if (getResponse.Item1 != HttpStatusCode.OK || getResponse.Item2 is null || getResponse.Item2.Id != oldObj.Id)
-                    {
-                        StateIdComparison = GlobalWinValues.StateWait;
-                        return;
-                    }
+                    StateIdComparison = GlobalWinValues.StateWait;
+                    return;
                 }
-                Tuple<HttpStatusCode, List<ModelType>> getAllResponse = await httpRequest.GetAll();
-                if (getAllResponse.Item1 == HttpStatusCode.OK)
-                {
-                    foreach (ModelType newObj in getAllResponse.Item2)
-                    {
-                        bool isInOldList = false;
-                        foreach (ModelType oldObj in oldList)
-                        {
-                            if (newObj.Id == oldObj.Id) { isInOldList = true; }
-                        }
-                        if (!isInOldList) { StateIdComparison = GlobalWinValues.StateOn; return; }
-                    }
-                }
-                StateIdComparison = GlobalWinValues.StateRun;
-                return;
             }
+            if (DbVersion is null || httpRequest is null) { StateIdComparison = GlobalWinValues.StateOff; return; }
+            Tuple<HttpStatusCode, List<ModelType>> getAllResponse = await httpRequest.GetAll();
+            if (getAllResponse.Item1 == HttpStatusCode.OK)
+            {
+                foreach (ModelType newObj in getAllResponse.Item2)
+                {
+                    bool isInOldList = false;
+                    foreach (ModelType oldObj in oldList)
+                    {
+                        if (newObj.Id == oldObj.Id) { isInOldList = true; }
+                    }
+                    if (!isInOldList) { StateIdComparison = GlobalWinValues.StateOn; return; }
+                }
+            }
+            StateIdComparison = GlobalWinValues.StateRun;
+            return;
         }
 
-        public void UpdateStateColors() { RaisePropertyChanged(nameof(StateIdComparison)); }
+        public void UpdateStateColors() { _ = SetStateIdComparison(); }
 
         public async Task<int> AddSqlForceId(ModelType obj)
         {
             if (httpRequest is not null)
             {
                 AddDto<ModelType> addDto = new();
-                addDto.Dto.ReMap(obj);
+                addDto.Dto.Model2Dto(obj);
                 Tuple<HttpStatusCode, ModelType?> addResponse = await httpRequest.Add(addDto);
                 if (addResponse.Item1 == HttpStatusCode.OK && !DatabaseVM.UseAcceptNewId(true))
                 {
                     UniqPropsDto<ModelType> uniqPropsDto = new();
-                    uniqPropsDto.Dto.ReMap(obj);
+                    uniqPropsDto.Dto.Model2Dto(obj);
                     Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
                     if (getResponse.Item1 == HttpStatusCode.OK && getResponse.Item2 is not null && getResponse.Item2.Id != obj.Id)
                     {
@@ -477,6 +480,7 @@ namespace GTRC_Database_Viewer.ViewModels
         public UICmd ClearJsonCmd { get; set; }
         public UICmd ConvertJsonCmd { get; set; }
         public UICmd LoadDbVersionListCmd { get; set; }
+        public UICmd ExportVersionJsonToSqlCmd { get; set; }
         public UICmd ClearFilterCmd { get; set; }
     }
 }

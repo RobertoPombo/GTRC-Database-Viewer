@@ -20,12 +20,14 @@ namespace GTRC_Database_Viewer.ViewModels
         public DatabaseVM? DatabaseVM { get { return databaseVM; } set { databaseVM = value; RaisePropertyChanged(); } }
 
         public static readonly Dictionary<Type, List<Type>> DictOldDbVersionModels = new()
-        {
+        { // V0
             { typeof(Color), new List<Type>() { typeof(Color) } },
+            { typeof(Manufacturer), new List<Type>() { typeof(Migrations.V0.Manufacturer) } },
             { typeof(Car), new List<Type>() { typeof(Migrations.V0.Car) } },
             { typeof(Track), new List<Type>() { typeof(Migrations.V0.Track) } },
             { typeof(User), new List<Type>() { typeof(User) } },
-            { typeof(Series), new List<Type>() { typeof(Series) } }
+            { typeof(Series), new List<Type>() { typeof(Series) } },
+            { typeof(Season), new List<Type>() { typeof(Migrations.V0.Season) } }
         };
     }
 }
