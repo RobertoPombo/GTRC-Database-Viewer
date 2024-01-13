@@ -58,21 +58,22 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition SharedSizeGroup="{Binding Name}" />
                                             </Grid.ColumnDefinitions>
-                                            <Border x:Name="DataBorder" Height="22" Padding="7,5,7,4">
+                                            <Border x:Name="DataBorder" Height="22" Padding="7,5,7,4" Visibility="Visible">
                                                 <TextBlock Grid.Column="0" Text="{Binding Value}" x:Name="DataText"
                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
                                             </Border>
-                                            <Image Grid.Column="0" Source="{Binding Path}" x:Name="LogoImage"
-                                                   Visibility="Collapsed" Height="20" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                            <Image Grid.Column="0" x:Name="LogoImage" Visibility="Collapsed" Height="20"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"/>
                                         </Grid>
                                         <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding Name}" Value="Preview">
+                                            <DataTrigger Binding="{Binding DataType}" Value="Color">
                                                 <Setter TargetName="DataText" Property="Background" Value="{Binding Value}"/>
                                                 <Setter TargetName="DataText" Property="Text" Value=""/>
                                                 <Setter TargetName="DataText" Property="Width" Value="50"/>
                                                 <Setter TargetName="DataText" Property="Height" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding Name}" Value="Logo">
+                                            <DataTrigger Binding="{Binding DataType}" Value="Image">
+                                                <Setter TargetName="LogoImage" Property="Source" Value="{Binding Value}"/>
                                                 <Setter TargetName="DataBorder" Property="Visibility" Value="Collapsed"/>
                                                 <Setter TargetName="LogoImage" Property="Visibility" Value="Visible"/>
                                             </DataTrigger>

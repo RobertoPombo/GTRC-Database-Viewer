@@ -23,7 +23,7 @@ namespace GTRC_Database_Viewer.Models
                 FullDto<ModelType> dto = new() { Dto = Mapper<ModelType>.Model2FullDto(Object) };
                 foreach (DatabaseFilter<ModelType> filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters)
                 {
-                    if (filter.Property is not null) { List.Add(new DataField<ModelType>(this, filter.Property, filter.Property?.GetValue(dto.Dto))); }
+                    if (filter.Property is not null) { List.Add(new DataField<ModelType>(this, filter.Property, filter.Property?.GetValue(dto.Dto), retFull)); }
                 }
             }
             else
@@ -32,10 +32,10 @@ namespace GTRC_Database_Viewer.Models
                 dto.Dto.Model2Dto(Object);
                 foreach (PropertyInfo property in GlobalValues.DictDtoModels[typeof(ModelType)][DtoType.Add].GetProperties())
                 {
-                    List.Add(new DataField<ModelType>(this, property, property.GetValue(dto.Dto)));
+                    List.Add(new DataField<ModelType>(this, property, property.GetValue(dto.Dto), retFull));
                 }
             }
-            if (index > -1) { indexNr = List.Count; List.Add(new DataField<ModelType>(this, nameof(Nr), index)); }
+            if (index > -1) { indexNr = List.Count; List.Add(new DataField<ModelType>(this, nameof(Nr), index, retFull)); }
             RaisePropertyChanged(nameof(List));
         }
 

@@ -42,17 +42,21 @@
                 <DataTemplate>
                     <Grid>
                         <TextBox x:Name="InputText" Text="{Binding Value, UpdateSourceTrigger=LostFocus}"
-                                 Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Margin="5"/>
-                        <ComboBox x:Name="ComboText"
+                                 Style="{StaticResource TextBoxStyle}" Visibility="Visible" Margin="5"/>
+                        <ComboBox x:Name="ComboText" Visibility="Collapsed" 
                                   ItemsSource="{Binding ListDropdown, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
-                                  SelectedValuePath="Id"
                                   SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                   Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
                     </Grid>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding ListDropdown.Count}" Value="0">
-                            <Setter TargetName="InputText" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="ComboText" Property="Visibility" Value="Collapsed"/>
+                        <DataTrigger Binding="{Binding DataType}" Value="Dropdown">
+                            <Setter TargetName="InputText" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="ComboText" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DataType}" Value="DropdownId">
+                            <Setter TargetName="InputText" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="ComboText" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ComboText" Property="SelectedValuePath" Value="Id"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>

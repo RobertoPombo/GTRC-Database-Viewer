@@ -10,19 +10,19 @@ namespace GTRC_Database_Viewer.Models
 {
     public class DataField<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
-        private string name = "";
-        private dynamic? value = GlobalValues.NoId;
+        private string name = string.Empty;
+        private dynamic? value;
         private List<dynamic> listDropdown = [];
-        private string? path;
+        private DataDisplayType dataType = DataDisplayType.Default;
 
         public DataRow<ModelType>? DataRow;
         public PropertyInfo? Property;
 
-        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic? val) { Property = property; Initialize(dataRow, property.Name, val); }
+        public DataField(DataRow<ModelType>? dataRow, PropertyInfo property, dynamic? val, bool retFull) { Property = property; Initialize(dataRow, property.Name, val, retFull); }
 
-        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic? val) { Initialize(dataRow, propertyName, val); }
+        public DataField(DataRow<ModelType>? dataRow, string propertyName, dynamic? val, bool retFull) { Initialize(dataRow, propertyName, val, retFull); }
 
-        public void Initialize(DataRow<ModelType>? dataRow, string propertyName, dynamic? value)
+        public void Initialize(DataRow<ModelType>? dataRow, string propertyName, dynamic? value, bool retFull)
         {
             DataRow = dataRow;
             Name = propertyName;
@@ -31,26 +31,33 @@ namespace GTRC_Database_Viewer.Models
             if (Property is not null)
             {
                 Type? TypeForeignId = GlobalValues.GetTypeForeignId(Name);
-                if (Property.PropertyType.IsEnum)
+                Type? NullableType = Nullable.GetUnderlyingType(Property.PropertyType);
+                if (Property.PropertyType == typeof(bool) || (NullableType is not null && NullableType == typeof(bool))) // Bool properties
                 {
-                    foreach (var enumType in Enum.GetValues(Property.PropertyType))
-                    {
-                        listDropdown.Add(enumType.ToString() ?? string.Empty);
-                    }
-                    Value = value?.ToString();
+                    if (retFull) { if (value) { Value = GlobalWinValues.StateRun; } else { Value = GlobalWinValues.StateWait; } DataType = DataDisplayType.Color; }
+                    else { listDropdown = [true, false]; DataType = DataDisplayType.Dropdown; }
                 }
-                else if (TypeForeignId is not null)
+                else if (!retFull && ((NullableType is not null && NullableType.IsEnum) || (NullableType is null && Property.PropertyType.IsEnum))) // Enum properties
+                {
+                    foreach (var enumType in Enum.GetValues(NullableType ?? Property.PropertyType)) { listDropdown.Add(enumType); }
+                    DataType = DataDisplayType.Dropdown;
+                }
+                else if (!retFull && TypeForeignId is not null) // Id properties
                 {
                     var _list = DatabaseVM.DictDatabaseTableVM[TypeForeignId].ObjList;
                     foreach (dynamic obj in _list) { listDropdown.Add(obj); }
+                    DataType = DataDisplayType.DropdownId;
                 }
-                else if (Property.PropertyType == typeof(System.Drawing.Color))
+                else if (retFull && Property.PropertyType == typeof(System.Drawing.Color)) // Color preview
                 {
                     Value = new SolidColorBrush(Color.FromArgb(value?.A ?? 0, value?.R ?? 0, value?.G ?? 0, value?.B ?? 0));
+                    DataType = DataDisplayType.Color;
                 }
-                else if (Name == "Logo") { Path = Value?.ToString(); }
+                /*else if (retFull && value?.ToString().Length > ".png".Length && value?.ToString()[^".png".Length..] == ".png") // Image properties
+                {
+                    DataType = DataDisplayType.Image;
+                }*/
             }
-            else { Path = null; }
         }
 
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
@@ -63,6 +70,6 @@ namespace GTRC_Database_Viewer.Models
             set { listDropdown = value; RaisePropertyChanged(); }
         }
 
-        public dynamic? Path { get { return path; } set { path = value; RaisePropertyChanged(); } }
+        public DataDisplayType DataType { get { return dataType; } set { dataType = value; RaisePropertyChanged(); } }
     }
 }
