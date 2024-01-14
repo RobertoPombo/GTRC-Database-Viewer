@@ -25,7 +25,7 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(Manufacturer), new List<Type>() { typeof(Migrations.V0.Manufacturer) } },
             { typeof(Car), new List<Type>() { typeof(Migrations.V0.Car) } },
             { typeof(Track), new List<Type>() { typeof(Migrations.V0.Track) } },
-            { typeof(User), new List<Type>() { typeof(User) } },
+            { typeof(User), new List<Type>() { typeof(Migrations.V0.User) } },
             { typeof(Series), new List<Type>() { typeof(Series) } },
             { typeof(Season), new List<Type>() { typeof(Migrations.V0.Season) } }
         };

@@ -281,7 +281,7 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public void ExportVersionJsonToSql()
         {
-            ConvertJson();
+            ObjList = GetListPreviousDbVersion();
             _ = WriteSql();
         }
 
