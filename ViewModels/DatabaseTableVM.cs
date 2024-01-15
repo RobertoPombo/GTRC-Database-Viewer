@@ -190,6 +190,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 UpdateDto<ModelType> updateDto = new();
                 updateDto.Dto.Model2Dto(Selected.Object);
                 updateDto.Dto.Model2Dto(Current.Object);
+                updateDto.Dto.Id = Selected.Object.Id;
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
                 if (response.Item1 == HttpStatusCode.OK) { await GetById(Selected.Object.Id); }
                 else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
