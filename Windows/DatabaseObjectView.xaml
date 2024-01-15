@@ -28,6 +28,8 @@
                                       ItemsSource="{Binding ListDropdown, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
                                       SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                       Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
+                            <CheckBox x:Name="CheckText" Visibility="Collapsed"
+                                      Style="{StaticResource SwitchCheckBoxStyle}" HorizontalAlignment="Left" Margin="5"/>
                         </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding DataType}" Value="Dropdown">
@@ -38,6 +40,11 @@
                                 <Setter TargetName="InputText" Property="Visibility" Value="Collapsed"/>
                                 <Setter TargetName="ComboText" Property="Visibility" Value="Visible"/>
                                 <Setter TargetName="ComboText" Property="SelectedValuePath" Value="Id"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding DataType}" Value="Checkbox">
+                                <Setter TargetName="InputText" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="CheckText" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="CheckText" Property="IsChecked" Value="{Binding Value}"/>
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>

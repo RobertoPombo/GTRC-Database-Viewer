@@ -51,8 +51,8 @@
                               SelectedValue="{Binding Selected, UpdateSourceTrigger=PropertyChanged}"
                               DisplayMemberPath="Name" Style="{StaticResource ComboBoxStyle}" Cursor="Hand"/>
                     <CheckBox Grid.Column="1"
-                            IsChecked="{Binding IsActive}"
-                            Style="{StaticResource SwitchCheckBoxStyle}" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                              IsChecked="{Binding IsActive}"
+                              Style="{StaticResource SwitchCheckBoxStyle}" HorizontalAlignment="Left" Margin="5,0,0,0"/>
                     <Button Grid.Column="2"
                             Command="{Binding AddPresetCmd}"
                             Style="{StaticResource AddButtonStyle}" Margin="0"/>
