@@ -6,18 +6,21 @@ namespace GTRC_Database_Viewer.ViewModels
     {
         public static MainVM? Instance;
 
-        private ClientConnectionSettingsVM? clientConnectionSettingsVM;
         private DatabaseVM? databaseVM;
+        private DbApiConnectionConfigVM? dbApiConnectionConfigVM;
+        private SqlConnectionConfigVM? sqlConnectionConfigVM;
 
         public MainVM()
         {
             Instance = this;
             DatabaseVM = new DatabaseVM();
-            ClientConnectionSettingsVM = new ClientConnectionSettingsVM();
+            DbApiConnectionConfigVM = new DbApiConnectionConfigVM();
+            SqlConnectionConfigVM = new SqlConnectionConfigVM();
         }
 
-        public ClientConnectionSettingsVM? ClientConnectionSettingsVM { get { return clientConnectionSettingsVM; } set { clientConnectionSettingsVM = value; RaisePropertyChanged(); } }
         public DatabaseVM? DatabaseVM { get { return databaseVM; } set { databaseVM = value; RaisePropertyChanged(); } }
+        public DbApiConnectionConfigVM? DbApiConnectionConfigVM { get { return dbApiConnectionConfigVM; } set { dbApiConnectionConfigVM = value; RaisePropertyChanged(); } }
+        public SqlConnectionConfigVM? SqlConnectionConfigVM { get { return sqlConnectionConfigVM; } set { sqlConnectionConfigVM = value; RaisePropertyChanged(); } }
 
         public static readonly Dictionary<Type, List<Type>> DictOldDbVersionModels = new()
         { // V0

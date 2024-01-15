@@ -5,54 +5,77 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GTRC_Database_Viewer.Windows"
              mc:Ignorable="d">
-    <StackPanel Grid.Row="1" Orientation="Vertical">
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,15">
-            <Button Command="{Binding DatabaseTableVM.DelCmd}"
-                    Style="{StaticResource DelButtonStyle}" Margin="15,0"/>
-            <Button Command="{Binding DatabaseTableVM.ClearCurrentCmd}"
-                    Content="Clear" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
-            <Button Command="{Binding DatabaseTableVM.UpdateCmd}"
-                    Content="Update" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
-            <Button Command="{Binding DatabaseTableVM.AddCmd}"
-                    Style="{StaticResource AddButtonStyle}" Margin="15,0"/>
+    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+        <StackPanel Orientation="Vertical">
+            <ComboBox ItemsSource="{Binding ModelTypeList, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
+                      SelectedValue="{Binding ModelType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                      SelectedValuePath="Value" DisplayMemberPath="Key"
+                      Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="0,2" Cursor="Hand"/>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+                <Button Content="Json Backup" Command="{Binding WriteJsonCmd}"
+                        Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="0,0,2,0"/>
+                <Button Content="Json" Command="{Binding ExportJsonCmd}"
+                        Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
+                <Label Foreground="{Binding StateIdComparisonJson}"
+                       Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
+                <Button Content="Json V?" Command="{Binding ExportConvertedJsonCmd}"
+                        Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
+                <Label Foreground="{Binding StateIdComparisonConvertedJson}"
+                       Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
+                <Button Command="{Binding DatabaseTableVM.ClearFilterCmd}" Visibility="Collapsed"
+                        Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="15,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2,0,18">
+                <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Delete childs" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
+                <CheckBox IsChecked="{Binding ForceSameId}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Keep Ids" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
+                <CheckBox IsChecked="{Binding ForceReseed}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Reseed" Style="{StaticResource LabelStyle}" Margin="0,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+                <Button Content="SQL" Command="{Binding DatabaseTableVM.WriteSqlCmd}"
+                        Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
+                <Button Content="SQL" Command="{Binding DatabaseTableVM.LoadSqlCmd}"
+                        Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
+                <Button Content="SQL" Command="{Binding DatabaseTableVM.ClearSqlCmd}"
+                        Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+                <Button Content="Json" Command="{Binding DatabaseTableVM.WriteJsonCmd}"
+                        Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
+                <Button Content="Json" Command="{Binding DatabaseTableVM.LoadJsonCmd}"
+                        Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
+                <Button Content="Json" Command="{Binding DatabaseTableVM.ClearJsonCmd}"
+                        Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
+                <Button Content="Json" Command="{Binding DatabaseTableVM.ExportJsonCmd}"
+                        Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="5,0,0,0"/>
+                <Label Foreground="{Binding DatabaseTableVM.StateIdComparisonJson}"
+                       Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+                <Button Content="{Binding DatabaseTableVM.DbVersionName}" Command="{Binding DatabaseTableVM.LoadConvertedJsonCmd}"
+                        Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
+                <ComboBox ItemsSource="{Binding DatabaseTableVM.DbVersionList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                          SelectedValue="{Binding DatabaseTableVM.DbVersion, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                          Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,0" Cursor="Hand"/>
+                <Button Command="{Binding DatabaseTableVM.LoadDbVersionListCmd}"
+                        Style="{StaticResource ResButtonStyle}" Margin="1,8"/>
+                <Button Content="{Binding DatabaseTableVM.DbVersionName}" Command="{Binding DatabaseTableVM.ExportConvertedJsonCmd}"
+                        Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="5,0,0,0"/>
+                <Label Foreground="{Binding DatabaseTableVM.StateIdComparisonConvertedJson}"
+                       Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,18,0,5">
+                <Button Command="{Binding DatabaseTableVM.DelCmd}"
+                        Style="{StaticResource DelButtonStyle}" Margin="15,0"/>
+                <Button Command="{Binding DatabaseTableVM.ClearCurrentCmd}"
+                        Content="Clear" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
+                <Button Command="{Binding DatabaseTableVM.UpdateCmd}"
+                        Content="Update" Style="{StaticResource ButtonStyle}" MinWidth="70" Margin="5,0"/>
+                <Button Command="{Binding DatabaseTableVM.AddCmd}"
+                        Style="{StaticResource AddButtonStyle}" Margin="15,0"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0">
-            <Button Content="SQL" Command="{Binding DatabaseTableVM.WriteSqlCmd}"
-                    Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="SQL" Command="{Binding DatabaseTableVM.LoadSqlCmd}"
-                    Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="SQL" Command="{Binding DatabaseTableVM.ClearSqlCmd}"
-                    Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,5,0,10">
-            <Button Content="Json" Command="{Binding DatabaseTableVM.WriteJsonCmd}"
-                    Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="Json" Command="{Binding DatabaseTableVM.LoadJsonCmd}"
-                    Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
-            <Button Content="Json" Command="{Binding DatabaseTableVM.ClearJsonCmd}"
-                    Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="5">
-            <Button Content="Json previous db version" Command="{Binding DatabaseTableVM.ConvertJsonCmd}"
-                    Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0">
-            <ComboBox ItemsSource="{Binding DatabaseTableVM.DbVersionList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                      SelectedValue="{Binding DatabaseTableVM.DbVersion, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                      Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,0" Cursor="Hand"/>
-            <Button Command="{Binding DatabaseTableVM.LoadDbVersionListCmd}"
-                    Style="{StaticResource ResButtonStyle}" Margin="1,8"/>
-            <Label Foreground="{Binding DatabaseTableVM.StateIdComparison}" Style="{StaticResource StatusLightLabelStyle}" Margin="5,0" Cursor=""/>
-            <Button Content="SQL" Command="{Binding DatabaseTableVM.ExportVersionJsonToSqlCmd}"
-                    Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="0"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,15,0,0">
-            <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
-            <Label Content="Delete child objects" Style="{StaticResource LabelStyle}" Margin="5"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0">
-            <CheckBox IsChecked="{Binding AcceptNewId}" Style="{StaticResource SwitchCheckBoxStyle}"/>
-            <Label Content="Accept new Id when writing to SQL" Style="{StaticResource LabelStyle}" Margin="5"/>
-        </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GTRC-Basics\GTRC_Basics.csproj" />
+    <ProjectReference Include="..\GTRC-Database-API\GTRC_Database_API.csproj" />
     <ProjectReference Include="..\GTRC-Database-Client\GTRC_Database_Client.csproj" />
     <ProjectReference Include="..\GTRC-WPF\GTRC_WPF.csproj" />
   </ItemGroup>

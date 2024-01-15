@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Windows.Media;
 
 using GTRC_Basics;
 using GTRC_WPF;
@@ -16,7 +17,8 @@ namespace GTRC_Database_Viewer.ViewModels
         private static Type modelType = GlobalValues.ModelTypeList[0];
         private dynamic databaseTableVM;
         private bool forceDelete = false;
-        private bool acceptNewId = true;
+        private bool forceSameId = false;
+        private bool forceReseed = false;
 
         public DatabaseVM()
         {
@@ -28,6 +30,9 @@ namespace GTRC_Database_Viewer.ViewModels
             databaseTableVM = DictDatabaseTableVM[modelType];
             if (!File.Exists(pathJson)) { SaveFilters(); }
             RestoreFilters();
+            WriteJsonCmd = new UICmd((o) => WriteJson());
+            ExportJsonCmd = new UICmd((o) => ExportJson());
+            ExportConvertedJsonCmd = new UICmd((o) => ExportConvertedJson());
         }
 
         public ObservableCollection<KeyValuePair<string, Type>> ModelTypeList
@@ -60,13 +65,31 @@ namespace GTRC_Database_Viewer.ViewModels
         public bool ForceDelete
         {
             get { return forceDelete; }
-            set { forceDelete = value; RaisePropertyChanged(); }
+            set { if (value != forceDelete) { forceDelete = value; if (!value) { ForceReseed = false; } RaisePropertyChanged(); } }
         }
 
-        public bool AcceptNewId
+        public bool ForceSameId
         {
-            get { return acceptNewId; }
-            set { acceptNewId = value; RaisePropertyChanged(); }
+            get { return forceSameId; }
+            set { if (value != forceSameId) { forceSameId = value; RaisePropertyChanged(); } }
+        }
+
+        public bool ForceReseed
+        {
+            get { return forceReseed; }
+            set { if (value != forceReseed) { forceReseed = value; ForceDelete = forceReseed; RaisePropertyChanged(); } }
+        }
+
+        public Brush StateIdComparisonJson
+        {
+            get { return GetStateIdComparisonJson(); }
+            set { RaisePropertyChanged(); }
+        }
+
+        public Brush StateIdComparisonConvertedJson
+        {
+            get { return GetStateIdComparisonConvertedJson(); }
+            set { RaisePropertyChanged(); }
         }
 
         public void RestoreFilters()
@@ -109,16 +132,73 @@ namespace GTRC_Database_Viewer.ViewModels
             GlobalValues.CurrentLogText = "Filter settings saved.";
         }
 
-        public static bool UseForceDelete(bool keepValue=false)
+        public static bool UseForceDelete(bool keepValue = false)
         {
             if (MainVM.Instance?.DatabaseVM?.ForceDelete ?? false) { if (!keepValue) { MainVM.Instance.DatabaseVM.ForceDelete = false; } return true; }
             else { return false; }
         }
 
-        public static bool UseAcceptNewId(bool keepValue = false)
+        public static bool UseForceSameId(bool keepValue = false)
         {
-            if (MainVM.Instance?.DatabaseVM?.AcceptNewId ?? true) { return true; }
-            else { if (!keepValue) { MainVM.Instance.DatabaseVM.AcceptNewId = true; } return false; }
+            if (MainVM.Instance?.DatabaseVM?.ForceSameId ?? false) { if (!keepValue) { MainVM.Instance.DatabaseVM.ForceSameId = false; } return true; }
+            else { return false; }
         }
+
+        public static bool UseForceReseed(bool keepValue = false)
+        {
+            if (MainVM.Instance?.DatabaseVM?.ForceReseed ?? false) { if (!keepValue) { MainVM.Instance.DatabaseVM.ForceReseed = false; } return true; }
+            else { return false; }
+        }
+
+        public static Brush GetStateIdComparisonJson()
+        {
+            Brush stateId = GlobalWinValues.StateOff;
+            List<Brush> states = [GlobalWinValues.StateRun, GlobalWinValues.StateOn, GlobalWinValues.StateWait];
+            foreach (Brush state in states)
+            {
+                foreach (dynamic databaseTable in DictDatabaseTableVM.Values)
+                {
+                    if (databaseTable.StateIdComparisonJson == state) { stateId = state; }
+                }
+            }
+            return stateId;
+        }
+
+        public static Brush GetStateIdComparisonConvertedJson()
+        {
+            Brush stateId = GlobalWinValues.StateOff;
+            List<Brush> states = [GlobalWinValues.StateRun, GlobalWinValues.StateOn, GlobalWinValues.StateWait];
+            foreach (Brush state in states)
+            {
+                foreach (dynamic databaseTable in DictDatabaseTableVM.Values)
+                {
+                    if (databaseTable.StateIdComparisonConvertedJson == state) { stateId = state; }
+                }
+            }
+            return stateId;
+        }
+
+        public void WriteJson()
+        {
+            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { databaseTable.WriteJson(); }
+        }
+
+        public void ExportJson()
+        {
+            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { databaseTable.ExportJson(true); }
+            UseForceSameId();
+            UseForceReseed();
+        }
+
+        public void ExportConvertedJson()
+        {
+            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { databaseTable.ExportConvertedJson(true); }
+            UseForceSameId();
+            UseForceReseed();
+        }
+
+        public UICmd WriteJsonCmd { get; set; }
+        public UICmd ExportJsonCmd { get; set; }
+        public UICmd ExportConvertedJsonCmd { get; set; }
     }
 }

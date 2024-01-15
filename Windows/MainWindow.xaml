@@ -25,9 +25,13 @@
             <TabItem Header="Database" Style="{StaticResource TabItemStyle}" x:Name="DBTabItem">
                 <UserControl Content="{Binding DatabaseVM}" Margin="15"/>
             </TabItem>
-            <TabItem Header="API Connection Settings" Style="{StaticResource TabItemStyle}" x:Name="SettingsTabItem">
+            <TabItem Header="Connection Settings" Style="{StaticResource TabItemStyle}" x:Name="SettingsTabItem">
                 <ScrollViewer Margin="15" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                    <UserControl Content="{Binding ClientConnectionSettingsVM}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <UserControl Content="{Binding DbApiConnectionConfigVM}"/>
+                        <Canvas Width="1" Height="Auto" Background="{DynamicResource color3}" Margin="10"/>
+                        <UserControl Content="{Binding SqlConnectionConfigVM}"/>
+                    </StackPanel>
                 </ScrollViewer>
             </TabItem>
         </TabControl>

@@ -13,6 +13,7 @@ using GTRC_Database_Client;
 using GTRC_Database_Viewer.Models;
 using GTRC_WPF;
 using GTRC_Basics.Models.DTOs;
+using GTRC_Database_API.Helpers;
 
 namespace GTRC_Database_Viewer.ViewModels
 {
@@ -20,14 +21,16 @@ namespace GTRC_Database_Viewer.ViewModels
     {
         private static readonly int noDbVersionNr = -1;
         private string pathJson = GlobalValues.DataDirectory + typeof(ModelType).Name.ToLower() + ".json";
-        private ConnectionSettings? ConnectionSettings;
+        private DbApiConnectionConfig? DbApiConnectionConfig;
+        private SqlConnectionConfig? SqlConnectionConfig;
         private HttpRequest<ModelType>? httpRequest;
         private ObservableCollection<DataRow<ModelType>> filteredList = [];
         private DataRow<ModelType>? current;
         private DataRow<ModelType>? selected;
         private ObservableCollection<string> dbVersionList = [];
         private string? dbVersion;
-        private Brush stateIdComparison = GlobalWinValues.StateOff;
+        private Brush stateIdComparisonJson = GlobalWinValues.StateOff;
+        private Brush stateIdComparisonConvertedJson = GlobalWinValues.StateOff;
         private ObservableCollection<DatabaseFilter<ModelType>> filters = [];
         private int selectedId = GlobalValues.NoId;
         private SortState sortState = new();
@@ -56,22 +59,26 @@ namespace GTRC_Database_Viewer.ViewModels
             LoadJsonCmd = new UICmd((o) => LoadJson());
             WriteJsonCmd = new UICmd((o) => WriteJson());
             ClearJsonCmd = new UICmd((o) => ClearJson());
-            ConvertJsonCmd = new UICmd((o) => ConvertJson());
+            ExportJsonCmd = new UICmd((o) => ExportJson());
+            LoadConvertedJsonCmd = new UICmd((o) => LoadConvertedJson());
+            ExportConvertedJsonCmd = new UICmd((o) => ExportConvertedJson());
             LoadDbVersionListCmd = new UICmd((o) => LoadDbVersionList());
-            ExportVersionJsonToSqlCmd = new UICmd((o) => ExportVersionJsonToSql());
             ClearFilterCmd = new UICmd((o) => ClearFilter());
-            ClientConnectionSettingsVM.ConfirmApiConnectionEstablished += Initialize;
+            DbApiConnectionConfigVM.ConfirmApiConnectionEstablished += SetActiveDbApiConnection;
+            SqlConnectionConfigVM.ConfirmSqlConnectionEstablished += SetActiveSqlConnection;
             DatabaseTableVM<GTRC_Basics.Models.Color>.PublishList += UpdateStateColors;
         }
 
-        public async void Initialize()
+        public async void SetActiveDbApiConnection()
         {
             httpRequest = null;
-            ConnectionSettings = ConnectionSettings.GetActiveConnectionSettings();
-            if (ConnectionSettings is not null) { httpRequest = new(ConnectionSettings); }
+            DbApiConnectionConfig = DbApiConnectionConfig.GetActiveConnection();
+            if (DbApiConnectionConfig is not null) { httpRequest = new(DbApiConnectionConfig); }
             await ClearCurrent();
             _ = LoadSql();
         }
+
+        public void SetActiveSqlConnection() { SqlConnectionConfig = SqlConnectionConfig.GetActiveConnection(); }
 
         public List<ModelType> ObjList { get; set; } = [];
 
@@ -112,10 +119,32 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public int DbVersionNr
         {
-            get { if (int.TryParse(DbVersion?.Replace("V", "").Split(" ")[0], out int versionNr)) { return versionNr; } else { return noDbVersionNr; } }
+            get { if (int.TryParse(DbVersion?.ToLower().Replace("v", "").Split(" ")[0], out int versionNr)) { return versionNr; } else { return noDbVersionNr; } }
         }
 
-        public Brush StateIdComparison { get { return stateIdComparison; } set { stateIdComparison = value; RaisePropertyChanged(); } }
+        public string DbVersionName { get { return "Json V" + DbVersionNr.ToString(); } } // Sollte am besten im Frontend konvertiert werden
+
+        public Brush StateIdComparisonJson
+        {
+            get { return stateIdComparisonJson; }
+            set
+            {
+                stateIdComparisonJson = value;
+                RaisePropertyChanged();
+                if (MainVM.Instance?.DatabaseVM is not null) { MainVM.Instance.DatabaseVM.StateIdComparisonJson = GlobalWinValues.StateRunWait; }
+            }
+        }
+
+        public Brush StateIdComparisonConvertedJson
+        {
+            get { return stateIdComparisonConvertedJson; }
+            set
+            {
+                stateIdComparisonConvertedJson = value;
+                RaisePropertyChanged();
+                if (MainVM.Instance?.DatabaseVM is not null) { MainVM.Instance.DatabaseVM.StateIdComparisonConvertedJson = GlobalWinValues.StateRunWait; }
+            }
+        }
 
         public ObservableCollection<DatabaseFilter<ModelType>> Filters { get { return filters; } set { filters = value; RaisePropertyChanged(); } }
 
@@ -219,7 +248,7 @@ namespace GTRC_Database_Viewer.ViewModels
             OnPublishList();
         }
 
-        public async Task WriteSql()
+        public async Task WriteSql(bool keepValue = false)
         {
             if (httpRequest is not null)
             {
@@ -240,14 +269,19 @@ namespace GTRC_Database_Viewer.ViewModels
                     else { int deletedId = GlobalValues.NoId; while (deletedId < newObj.Id) { deletedId = await AddSqlForceId(newObj); } }
                 }
                 _ = LoadSql();
-                DatabaseVM.UseForceDelete();
-                DatabaseVM.UseAcceptNewId();
+                DatabaseVM.UseForceDelete(keepValue);
+                DatabaseVM.UseForceSameId(keepValue);
             }
         }
 
         public void ClearSql()
         {
-            if (httpRequest is not null)
+            if (DatabaseVM.UseForceReseed(true))
+            {
+                if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }
+                DatabaseVM.UseForceReseed();
+            }
+            else if (httpRequest is not null)
             {
                 foreach (ModelType obj in ObjList) { _ = httpRequest.Delete(obj.Id, DatabaseVM.UseForceDelete(true)); }
                 DatabaseVM.UseForceDelete();
@@ -257,14 +291,14 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public void LoadJson()
         {
-            _ = ResetLists(JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? [], filter: false);
+            _ = ResetLists(GetJsonList(), filter: false);
             OnPublishList();
         }
 
         public void WriteJson()
         {
             File.WriteAllText(pathJson, JsonConvert.SerializeObject(ObjList, Formatting.Indented), Encoding.Unicode);
-            OnPublishList();
+            _ = SetStateIdComparison();
         }
 
         public void ClearJson()
@@ -273,16 +307,26 @@ namespace GTRC_Database_Viewer.ViewModels
             LoadJson();
         }
 
-        public void ConvertJson()
+        public void ExportJson(bool keepValue = false)
         {
-            _ = ResetLists(GetListPreviousDbVersion(), filter: false);
+            if (DatabaseVM.UseForceReseed(true)) { if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }; }
+            ObjList = GetJsonList();
+            _ = WriteSql(keepValue);
+            DatabaseVM.UseForceReseed(keepValue);
+        }
+
+        public void LoadConvertedJson()
+        {
+            _ = ResetLists(GetConvertedJsonList(), filter: false);
             OnPublishList();
         }
 
-        public void ExportVersionJsonToSql()
+        public void ExportConvertedJson(bool keepValue = false)
         {
-            ObjList = GetListPreviousDbVersion();
-            _ = WriteSql();
+            if (DatabaseVM.UseForceReseed(true)) { if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }; }
+            ObjList = GetConvertedJsonList();
+            _ = WriteSql(keepValue);
+            DatabaseVM.UseForceReseed(keepValue);
         }
 
         public void ClearFilter()
@@ -376,7 +420,12 @@ namespace GTRC_Database_Viewer.ViewModels
             else { dbVersion = null; DbVersion = DbVersionList[^1]; }
         }
 
-        public List<ModelType> GetListPreviousDbVersion()
+        public List<ModelType> GetJsonList()
+        {
+            return JsonConvert.DeserializeObject<List<ModelType>>(File.ReadAllText(pathJson, Encoding.Unicode)) ?? [];
+        }
+
+        public List<ModelType> GetConvertedJsonList()
         {
             List<ModelType> newList = [];
             if (dbVersion is not null && DbVersionNr > noDbVersionNr && MainVM.DictOldDbVersionModels[typeof(ModelType)].Count > DbVersionNr)
@@ -406,37 +455,56 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task SetStateIdComparison()
         {
-            if (DbVersion is null || httpRequest is null) { StateIdComparison = GlobalWinValues.StateOff; return; }
-            List<ModelType> oldList = GetListPreviousDbVersion();
-            if (oldList.Count == 0) { StateIdComparison = GlobalWinValues.StateOff; return; }
-            foreach (ModelType oldObj in oldList)
-            {
-                UniqPropsDto<ModelType> uniqPropsDto = new();
-                uniqPropsDto.Dto.Model2Dto(oldObj);
-                if (DbVersion is null || httpRequest is null) { StateIdComparison = GlobalWinValues.StateOff; return; }
-                Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
-                if (getResponse.Item1 != HttpStatusCode.OK || getResponse.Item2 is null || getResponse.Item2.Id != oldObj.Id)
-                {
-                    StateIdComparison = GlobalWinValues.StateWait;
-                    return;
-                }
-            }
-            if (DbVersion is null || httpRequest is null) { StateIdComparison = GlobalWinValues.StateOff; return; }
+            StateIdComparisonJson = GlobalWinValues.StateOff;
+            StateIdComparisonConvertedJson = GlobalWinValues.StateOff;
+
+            if (DbVersion is null || httpRequest is null) { return; }
+            List<ModelType> listJson = GetJsonList();
+            bool allJsonInSql = await AllJsonInSql(listJson);
+            if (allJsonInSql) { StateIdComparisonJson = GlobalWinValues.StateRun; }
+            else { StateIdComparisonJson = GlobalWinValues.StateWait; }
+
+            if (DbVersion is null || httpRequest is null) { return; }
+            List<ModelType> listConvertedJson = GetConvertedJsonList();
+            bool allConvertedJsonInSql = await AllJsonInSql(listConvertedJson);
+            if (allConvertedJsonInSql) { StateIdComparisonConvertedJson = GlobalWinValues.StateRun; }
+            else { StateIdComparisonConvertedJson = GlobalWinValues.StateWait; }
+
+            if (DbVersion is null || httpRequest is null) { return; }
             Tuple<HttpStatusCode, List<ModelType>> getAllResponse = await httpRequest.GetAll();
             if (getAllResponse.Item1 == HttpStatusCode.OK)
             {
-                foreach (ModelType newObj in getAllResponse.Item2)
-                {
-                    bool isInOldList = false;
-                    foreach (ModelType oldObj in oldList)
-                    {
-                        if (newObj.Id == oldObj.Id) { isInOldList = true; }
-                    }
-                    if (!isInOldList) { StateIdComparison = GlobalWinValues.StateOn; return; }
-                }
+                bool allSqlInJson = AllSqlInJson(getAllResponse.Item2, listJson);
+                if (!allSqlInJson && allJsonInSql) { StateIdComparisonJson = GlobalWinValues.StateOn; }
+
+                bool allSqlInConvertedJson = AllSqlInJson(getAllResponse.Item2, listConvertedJson);
+                if (!allSqlInConvertedJson && allConvertedJsonInSql) { StateIdComparisonConvertedJson = GlobalWinValues.StateOn; }
             }
-            StateIdComparison = GlobalWinValues.StateRun;
-            return;
+        }
+
+        public async Task<bool> AllJsonInSql(List<ModelType> list)
+        {
+            foreach (ModelType obj in list)
+            {
+                UniqPropsDto<ModelType> uniqPropsDto = new();
+                uniqPropsDto.Dto.Model2Dto(obj);
+
+                if (DbVersion is null || httpRequest is null) { return false; }
+                Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
+                if (getResponse.Item1 != HttpStatusCode.OK || getResponse.Item2 is null || getResponse.Item2.Id != obj.Id) { return false; }
+            }
+            return true;
+        }
+
+        public bool AllSqlInJson(List<ModelType> listSql, List<ModelType> listJson)
+        {
+            foreach (ModelType objSql in listSql)
+            {
+                bool isInListJson = false;
+                foreach (ModelType objJson in listJson) { if (objSql.Id == objJson.Id) { isInListJson = true; } }
+                if (!isInListJson) { return false; }
+            }
+            return true;
         }
 
         public void UpdateStateColors() { _ = SetStateIdComparison(); }
@@ -448,7 +516,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 AddDto<ModelType> addDto = new();
                 addDto.Dto.Model2Dto(obj);
                 Tuple<HttpStatusCode, ModelType?> addResponse = await httpRequest.Add(addDto);
-                if (addResponse.Item1 == HttpStatusCode.OK && !DatabaseVM.UseAcceptNewId(true))
+                if (addResponse.Item1 == HttpStatusCode.OK && DatabaseVM.UseForceSameId(true))
                 {
                     UniqPropsDto<ModelType> uniqPropsDto = new();
                     uniqPropsDto.Dto.Model2Dto(obj);
@@ -478,9 +546,10 @@ namespace GTRC_Database_Viewer.ViewModels
         public UICmd LoadJsonCmd { get; set; }
         public UICmd WriteJsonCmd { get; set; }
         public UICmd ClearJsonCmd { get; set; }
-        public UICmd ConvertJsonCmd { get; set; }
+        public UICmd ExportJsonCmd { get; set; }
+        public UICmd LoadConvertedJsonCmd { get; set; }
+        public UICmd ExportConvertedJsonCmd { get; set; }
         public UICmd LoadDbVersionListCmd { get; set; }
-        public UICmd ExportVersionJsonToSqlCmd { get; set; }
         public UICmd ClearFilterCmd { get; set; }
     }
 }
