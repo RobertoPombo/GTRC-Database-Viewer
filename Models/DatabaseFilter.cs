@@ -12,7 +12,7 @@ namespace GTRC_Database_Viewer.Models
 {
     public class DatabaseFilter<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
-        private static readonly string noIdFilter = "-1";
+        public static readonly string NoIdFilter = "-1";
         private readonly PropertyInfo? property;
         private string propertyName = "";
         private string filter = string.Empty;
@@ -23,7 +23,7 @@ namespace GTRC_Database_Viewer.Models
         {
             SortCmd = new UICmd((o) => Sort());
             propertyName = _propertyName;
-            if (propertyName == GlobalValues.Id) { filter = noIdFilter; }
+            if (propertyName == GlobalValues.Id) { filter = NoIdFilter; }
         }
 
         [JsonIgnore] public PropertyInfo? Property { get { return property; } }
@@ -46,9 +46,9 @@ namespace GTRC_Database_Viewer.Models
                         {
                             bool noFilter = true;
                             foreach (DatabaseFilter<ModelType> _filter in list) { if (_filter.Filter != filter) { noFilter = false; break; } }
-                            if (noFilter) { list[0].Filter = noIdFilter; }
+                            if (noFilter) { list[0].Filter = NoIdFilter; }
                         }
-                        else { if (list[0].Filter == noIdFilter) { list[0].Filter = string.Empty; } }
+                        else { if (list[0].Filter == NoIdFilter) { list[0].Filter = string.Empty; } }
                     }
                     RaisePropertyChanged();
                     _ = DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].FilterList();

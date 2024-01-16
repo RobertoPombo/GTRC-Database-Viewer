@@ -34,6 +34,7 @@ namespace GTRC_Database_Viewer.ViewModels
         private ObservableCollection<DatabaseFilter<ModelType>> filters = [];
         private int selectedId = GlobalValues.NoId;
         private SortState sortState = new();
+        private bool allowFilter = true;
 
         public DatabaseTableVM()
         {
@@ -292,7 +293,9 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public void LoadJson()
         {
-            _ = ResetLists(GetJsonList(), filter: false);
+            allowFilter = false;
+            _ = ResetLists(GetJsonList());
+            allowFilter = true;
             OnPublishList();
         }
 
@@ -318,7 +321,9 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public void LoadConvertedJson()
         {
-            _ = ResetLists(GetConvertedJsonList(), filter: false);
+            allowFilter = false;
+            _ = ResetLists(GetConvertedJsonList());
+            allowFilter = true;
             OnPublishList();
         }
 
@@ -332,20 +337,26 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public void ClearFilter()
         {
-            for (int filterNr = Filters.Count - 1; filterNr >= 0; filterNr--) { Filters[filterNr].Filter = ""; }
+            allowFilter = false;
+            bool isFiltered = false;
+            for (int filterNr = Filters.Count - 1; filterNr >= 0; filterNr--) { if (Filters[filterNr].Filter.Length > 0) { isFiltered = true; break; } }
+            if (isFiltered) { for (int filterNr = Filters.Count - 1; filterNr >= 0; filterNr--) { Filters[filterNr].Filter = ""; } }
+            else if (Filters.Count > 0) { Filters[0].Filter = DatabaseFilter<ModelType>.NoIdFilter; }
+            allowFilter = true;
+            _ = FilterList();
         }
 
-        public async Task ResetLists(List<ModelType> _list, int index = 0, bool filter = true)
+        public async Task ResetLists(List<ModelType> _list, int index = 0)
         {
             ObjList = _list;
             _ = SetStateIdComparison();
-            await FilterList(index, filter);
+            await FilterList(index);
         }
 
-        public async Task FilterList(int index = 0, bool filter=true)
+        public async Task FilterList(int index = 0)
         {
             filteredList.Clear();
-            if (httpRequest is not null && filter)
+            if (httpRequest is not null && allowFilter)
             {
                 Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetByFilter(DatabaseFilter<ModelType>.GetFilterDtos(Filters));
                 if (response.Item1 == HttpStatusCode.OK)
@@ -353,7 +364,7 @@ namespace GTRC_Database_Viewer.ViewModels
                     for (int objNr = 0; objNr < response.Item2.Count; objNr++) { FilteredList.Add(new DataRow<ModelType>(response.Item2[objNr], true, objNr + 1)); }
                 }
             }
-            else if (!filter)
+            else if (!allowFilter)
             {
                 for (int objNr = 0; objNr < ObjList.Count; objNr++)
                 {

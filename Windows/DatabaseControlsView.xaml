@@ -7,10 +7,18 @@
              mc:Ignorable="d">
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
         <StackPanel Orientation="Vertical">
-            <ComboBox ItemsSource="{Binding ModelTypeList, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
-                      SelectedValue="{Binding ModelType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                      SelectedValuePath="Value" DisplayMemberPath="Key"
-                      Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="0,2" Cursor="Hand"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0" ItemsSource="{Binding ModelTypeList, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
+                          SelectedValue="{Binding ModelType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                          SelectedValuePath="Value" DisplayMemberPath="Key"
+                          Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,2" Cursor="Hand"/>
+                <Button Grid.Column="1" Command="{Binding DatabaseTableVM.ClearFilterCmd}" HorizontalAlignment="Right"
+                        Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="5,0"/>
+            </Grid>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
                 <Button Content="Json Backup" Command="{Binding WriteJsonCmd}"
                         Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="0,0,2,0"/>
@@ -22,8 +30,6 @@
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
                 <Label Foreground="{Binding StateIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
-                <Button Command="{Binding DatabaseTableVM.ClearFilterCmd}" Visibility="Collapsed"
-                        Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="15,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2,0,18">
                 <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
