@@ -443,23 +443,26 @@ namespace GTRC_Database_Viewer.ViewModels
             if (dbVersion is not null && DbVersionNr > noDbVersionNr && MainVM.DictOldDbVersionModels[typeof(ModelType)].Count > DbVersionNr)
             {
                 string path = GlobalValues.DataDirectory + dbVersion + "\\" + typeof(ModelType).Name.ToLower() + ".json";
-                List<object> oldList = JsonConvert.DeserializeObject<List<object>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
-                foreach (IEnumerable<KeyValuePair<string, JToken>> oldObj in oldList.Cast<IEnumerable<KeyValuePair<string, JToken>>>())
+                if (File.Exists(path))
                 {
-                    dynamic newObj = Activator.CreateInstance(MainVM.DictOldDbVersionModels[typeof(ModelType)][DbVersionNr])!;
-                    foreach (PropertyInfo newProperty in newObj.GetType().GetProperties())
+                    List<object> oldList = JsonConvert.DeserializeObject<List<object>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
+                    foreach (IEnumerable<KeyValuePair<string, JToken>> oldObj in oldList.Cast<IEnumerable<KeyValuePair<string, JToken>>>())
                     {
-                        foreach (KeyValuePair<string, JToken> oldProperty in oldObj)
+                        dynamic newObj = Activator.CreateInstance(MainVM.DictOldDbVersionModels[typeof(ModelType)][DbVersionNr])!;
+                        foreach (PropertyInfo newProperty in newObj.GetType().GetProperties())
                         {
-                            if (oldProperty.Key.Replace("_","").Equals(newProperty.Name.Replace("_", ""), StringComparison.CurrentCultureIgnoreCase))
+                            foreach (KeyValuePair<string, JToken> oldProperty in oldObj)
                             {
-                                var newValue = Scripts.CastValue(newProperty, oldProperty.Value);
-                                if (newValue is not null && newValue.GetType() == newProperty.PropertyType) { newProperty.SetValue(newObj, newValue); }
-                                break;
+                                if (oldProperty.Key.Replace("_", "").Equals(newProperty.Name.Replace("_", ""), StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    var newValue = Scripts.CastValue(newProperty, oldProperty.Value);
+                                    if (newValue is not null && newValue.GetType() == newProperty.PropertyType) { newProperty.SetValue(newObj, newValue); }
+                                    break;
+                                }
                             }
                         }
+                        newList.Add(Mapper<ModelType>.Map(newObj, new ModelType()));
                     }
-                    newList.Add(Mapper<ModelType>.Map(newObj, new ModelType()));
                 }
             }
             return newList;

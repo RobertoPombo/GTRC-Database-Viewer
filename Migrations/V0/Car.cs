@@ -7,12 +7,19 @@
             set
             {
                 if (V0.Manufacturer.List.Count > 0) { ManufacturerId = V0.Manufacturer.List[0].Id; }
-                foreach (Manufacturer _manufacturer in V0.Manufacturer.List) { if (_manufacturer.Name == value) { ManufacturerId = _manufacturer.Id; break; } }
+                foreach (Manufacturer obj in V0.Manufacturer.List) { if (obj.Name == value) { ManufacturerId = obj.Id; break; } }
             }
         }
 
         public DateTime releaseDate { set { ReleaseDate = DateOnly.FromDateTime(value); } }
 
-        public string Category { set { if (Enum.TryParse(value, out GTRC_Basics.CarClass carClass)) { Class = carClass; } } }
+        public string Category
+        {
+            set
+            {
+                if (V0.Carclass.List.Count > 0) { CarclassId = V0.Carclass.List[0].Id; }
+                foreach (Carclass obj in V0.Carclass.List) { if (obj.Name == value) { CarclassId = obj.Id; break; } }
+            }
+        }
     }
 }
