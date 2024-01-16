@@ -10,7 +10,7 @@
 
         public new int Id
         {
-            get { return  id; }
+            get { return id; }
             set { }
         }
 

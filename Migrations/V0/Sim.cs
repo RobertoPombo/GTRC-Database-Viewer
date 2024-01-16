@@ -1,8 +1,8 @@
 ﻿namespace GTRC_Database_Viewer.Migrations.V0
 {
-    public class Carclass : GTRC_Basics.Models.Carclass
+    public class Sim : GTRC_Basics.Models.Sim
     {
-        public static List<Carclass> List = [];
+        public static List<Sim> List = [];
 
         private int id = GTRC_Basics.GlobalValues.NoId;
 
@@ -13,7 +13,7 @@
             {
                 id = value;
                 bool isInList = false;
-                foreach (Carclass obj in List)
+                foreach (Sim obj in List)
                 {
                     if (obj.Id == value) { isInList = true; break; }
                 }

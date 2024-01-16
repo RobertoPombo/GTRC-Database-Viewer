@@ -25,12 +25,15 @@ namespace GTRC_Database_Viewer.ViewModels
         public static readonly Dictionary<Type, List<Type>> DictOldDbVersionModels = new()
         { // V0
             { typeof(Color), new List<Type>() { typeof(Color) } },
+            { typeof(Sim), new List<Type>() { typeof(Migrations.V0.Sim) } },
             { typeof(User), new List<Type>() { typeof(Migrations.V0.User) } },
             { typeof(Track), new List<Type>() { typeof(Migrations.V0.Track) } },
             { typeof(Carclass), new List<Type>() { typeof(Migrations.V0.Carclass) } },
             { typeof(Manufacturer), new List<Type>() { typeof(Migrations.V0.Manufacturer) } },
             { typeof(Car), new List<Type>() { typeof(Migrations.V0.Car) } },
-            { typeof(Series), new List<Type>() { typeof(Series) } },
+            { typeof(Role), new List<Type>() { typeof(Role) } },
+            { typeof(UserRole), new List<Type>() { typeof(Migrations.V0.UserRole) } },
+            { typeof(Series), new List<Type>() { typeof(Migrations.V0.Series) } },
             { typeof(Season), new List<Type>() { typeof(Migrations.V0.Season) } },
             { typeof(SeasonCarclass), new List<Type>() { typeof(Migrations.V0.SeasonCarclass) } }
         };
