@@ -453,8 +453,8 @@ namespace GTRC_Database_Viewer.ViewModels
                         {
                             if (oldProperty.Key.Replace("_","").Equals(newProperty.Name.Replace("_", ""), StringComparison.CurrentCultureIgnoreCase))
                             {
-                                dynamic? newValue = Scripts.CastValue(newProperty, oldProperty.Value);
-                                if (newValue is not null) { newProperty.SetValue(newObj, newValue); }
+                                var newValue = Scripts.CastValue(newProperty, oldProperty.Value);
+                                if (newValue is not null && newValue.GetType() == newProperty.PropertyType) { newProperty.SetValue(newObj, newValue); }
                                 break;
                             }
                         }

@@ -59,7 +59,8 @@ namespace GTRC_Database_Viewer.Models
                 PropertyInfo? propertyModel = typeof(ModelType).GetProperty(dataField.Property?.Name ?? string.Empty);
                 if (dataField.Property is not null && propertyModel is not null)
                 {
-                    propertyModel.SetValue(Object, Scripts.CastValue(dataField.Property, dataField.Value));
+                    var newValue = Scripts.CastValue(dataField.Property, dataField.Value);
+                    if (newValue.GetType() == propertyModel.PropertyType) { propertyModel.SetValue(Object, newValue); }
                 }
             }
         }
