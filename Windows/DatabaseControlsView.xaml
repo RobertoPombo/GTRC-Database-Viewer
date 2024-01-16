@@ -7,7 +7,7 @@
              mc:Ignorable="d">
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
         <StackPanel Orientation="Vertical">
-            <Grid>
+            <Grid Margin="0,3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -15,11 +15,11 @@
                 <ComboBox Grid.Column="0" ItemsSource="{Binding ModelTypeList, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
                           SelectedValue="{Binding ModelType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                           SelectedValuePath="Value" DisplayMemberPath="Key"
-                          Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,2" Cursor="Hand"/>
+                          Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,0" Cursor="Hand"/>
                 <Button Grid.Column="1" Command="{Binding DatabaseTableVM.ClearFilterCmd}" HorizontalAlignment="Right"
                         Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="5,0"/>
             </Grid>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
                 <Button Content="Json Backup" Command="{Binding WriteJsonCmd}"
                         Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="0,0,2,0"/>
                 <Button Content="Json" Command="{Binding ExportJsonCmd}"
@@ -31,7 +31,7 @@
                 <Label Foreground="{Binding StateIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2,0,18">
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
                 <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
                 <Label Content="Delete childs" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
                 <CheckBox IsChecked="{Binding ForceSameId}" Style="{StaticResource SwitchCheckBoxStyle}"/>
@@ -39,7 +39,8 @@
                 <CheckBox IsChecked="{Binding ForceReseed}" Style="{StaticResource SwitchCheckBoxStyle}"/>
                 <Label Content="Reseed" Style="{StaticResource LabelStyle}" Margin="0,5,5,5"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+            <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"/>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
                 <Button Content="SQL" Command="{Binding DatabaseTableVM.WriteSqlCmd}"
                         Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
                 <Button Content="SQL" Command="{Binding DatabaseTableVM.LoadSqlCmd}"
@@ -47,7 +48,7 @@
                 <Button Content="SQL" Command="{Binding DatabaseTableVM.ClearSqlCmd}"
                         Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
                 <Button Content="Json" Command="{Binding DatabaseTableVM.WriteJsonCmd}"
                         Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="5,0"/>
                 <Button Content="Json" Command="{Binding DatabaseTableVM.LoadJsonCmd}"
@@ -59,7 +60,7 @@
                 <Label Foreground="{Binding DatabaseTableVM.StateIdComparisonJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,2">
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
                 <Button Content="{Binding DatabaseTableVM.DbVersionName}" Command="{Binding DatabaseTableVM.LoadConvertedJsonCmd}"
                         Style="{StaticResource ImpTextButtonStyle}" Padding="7" Margin="5,0"/>
                 <ComboBox ItemsSource="{Binding DatabaseTableVM.DbVersionList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
@@ -72,7 +73,8 @@
                 <Label Foreground="{Binding DatabaseTableVM.StateIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,18,0,5">
+            <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"/>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                 <Button Command="{Binding DatabaseTableVM.DelCmd}"
                         Style="{StaticResource DelButtonStyle}" Margin="15,0"/>
                 <Button Command="{Binding DatabaseTableVM.ClearCurrentCmd}"
