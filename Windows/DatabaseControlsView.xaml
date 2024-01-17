@@ -26,7 +26,7 @@
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
                 <Label Foreground="{Binding StateIdComparisonJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
-                <Button Content="Json V?" Command="{Binding ExportConvertedJsonCmd}"
+                <Button Content="Json v?" Command="{Binding ExportConvertedJsonCmd}"
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
                 <Label Foreground="{Binding StateIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
