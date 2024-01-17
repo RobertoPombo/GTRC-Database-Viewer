@@ -35,7 +35,8 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(UserRole), new List<Type>() { typeof(Migrations.V0.UserRole) } },
             { typeof(Series), new List<Type>() { typeof(Migrations.V0.Series) } },
             { typeof(Season), new List<Type>() { typeof(Migrations.V0.Season) } },
-            { typeof(SeasonCarclass), new List<Type>() { typeof(Migrations.V0.SeasonCarclass) } }
+            { typeof(SeasonCarclass), new List<Type>() { typeof(Migrations.V0.SeasonCarclass) } },
+            { typeof(Event), new List<Type>() { typeof(Event) } }
         };
     }
 }

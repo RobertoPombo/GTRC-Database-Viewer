@@ -12,6 +12,7 @@ namespace GTRC_Database_Viewer.Models
     {
         private string name = string.Empty;
         private dynamic? value;
+        private Brush? color;
         private List<dynamic> listDropdown = [];
         private DataDisplayType dataType = DataDisplayType.Default;
 
@@ -34,7 +35,7 @@ namespace GTRC_Database_Viewer.Models
                 Type? NullableType = Nullable.GetUnderlyingType(Property.PropertyType);
                 if (Property.PropertyType == typeof(bool) || (NullableType is not null && NullableType == typeof(bool))) // Bool properties
                 {
-                    if (retFull) { if (value) { Value = GlobalWinValues.StateRun; } else { Value = GlobalWinValues.StateWait; } DataType = DataDisplayType.Color; }
+                    if (retFull) { if (value) { Color = GlobalWinValues.StateRun; } else { Color = GlobalWinValues.StateWait; } DataType = DataDisplayType.Color; }
                     else { DataType = DataDisplayType.Checkbox; }
                 }
                 else if (!retFull && ((NullableType is not null && NullableType.IsEnum) || (NullableType is null && Property.PropertyType.IsEnum))) // Enum properties
@@ -50,7 +51,7 @@ namespace GTRC_Database_Viewer.Models
                 }
                 else if (retFull && Property.PropertyType == typeof(System.Drawing.Color)) // Color preview
                 {
-                    Value = new SolidColorBrush(Color.FromArgb(value?.A ?? 0, value?.R ?? 0, value?.G ?? 0, value?.B ?? 0));
+                    Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(value?.A ?? 0, value?.R ?? 0, value?.G ?? 0, value?.B ?? 0));
                     DataType = DataDisplayType.Color;
                 }
                 /*else if (retFull && value?.ToString().Length > ".png".Length && value?.ToString()[^".png".Length..] == ".png") // Image properties
@@ -63,6 +64,8 @@ namespace GTRC_Database_Viewer.Models
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
 
         public dynamic? Value { get { return value; } set { this.value = value; RaisePropertyChanged(); } }
+
+        public Brush? Color { get { return color; } set { color = value; RaisePropertyChanged(); } }
 
         public List<dynamic> ListDropdown
         {

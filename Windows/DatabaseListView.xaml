@@ -67,7 +67,7 @@
                                         </Grid>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding DataType}" Value="Color">
-                                                <Setter TargetName="DataText" Property="Background" Value="{Binding Value}"/>
+                                                <Setter TargetName="DataText" Property="Background" Value="{Binding Color}"/>
                                                 <Setter TargetName="DataText" Property="Text" Value=""/>
                                                 <Setter TargetName="DataText" Property="Width" Value="50"/>
                                                 <Setter TargetName="DataText" Property="Height" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
