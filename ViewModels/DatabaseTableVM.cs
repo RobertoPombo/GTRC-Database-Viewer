@@ -123,7 +123,7 @@ namespace GTRC_Database_Viewer.ViewModels
             get { if (int.TryParse(DbVersion?.ToLower().Replace("v", "").Split(" ")[0], out int versionNr)) { return versionNr; } else { return noDbVersionNr; } }
         }
 
-        public string DbVersionName { get { return "Json V" + DbVersionNr.ToString(); } } // Sollte am besten im Frontend konvertiert werden
+        public string DbVersionName { get { return "Json v" + DbVersionNr.ToString(); } } // Sollte am besten im Frontend konvertiert werden
 
         public Brush StateIdComparisonJson
         {
