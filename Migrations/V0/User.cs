@@ -1,7 +1,11 @@
-﻿namespace GTRC_Database_Viewer.Migrations.V0
+﻿using GTRC_Basics;
+
+namespace GTRC_Database_Viewer.Migrations.V0
 {
     public class User : GTRC_Basics.Models.User
     {
+        public new int CommunityId { get { if (V0.Community.List.Count > 0) { return V0.Community.List[0].Id; } else { return GlobalValues.NoId; } } }
+
         public new string NickName
         {
             get

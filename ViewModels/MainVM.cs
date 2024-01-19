@@ -25,6 +25,7 @@ namespace GTRC_Database_Viewer.ViewModels
         public static readonly Dictionary<Type, List<Type>> DictOldDbVersionModels = new()
         { // V0
             { typeof(Color), new List<Type>() { typeof(Color) } },
+            { typeof(Community), new List<Type>() { typeof(Migrations.V0.Community) } },
             { typeof(Sim), new List<Type>() { typeof(Migrations.V0.Sim) } },
             { typeof(User), new List<Type>() { typeof(Migrations.V0.User) } },
             { typeof(Track), new List<Type>() { typeof(Migrations.V0.Track) } },
