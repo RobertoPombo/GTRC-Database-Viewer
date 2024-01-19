@@ -372,7 +372,7 @@ namespace GTRC_Database_Viewer.ViewModels
         public async Task FilterList(int index = 0)
         {
             filteredList.Clear();
-            if (httpRequest is not null && allowFilter)
+            if (allowFilter && httpRequest is not null)
             {
                 Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetByFilter(DatabaseFilter<ModelType>.GetFilterDtos(Filters));
                 if (response.Item1 == HttpStatusCode.OK)

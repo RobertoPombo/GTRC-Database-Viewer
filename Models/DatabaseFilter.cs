@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Windows;
 
 using GTRC_Basics;
 using GTRC_WPF;
@@ -16,6 +17,7 @@ namespace GTRC_Database_Viewer.Models
         private readonly PropertyInfo? property;
         private string propertyName = "";
         private string filter = string.Empty;
+        private byte filterProcessCount = 0;
 
         public DatabaseFilter(PropertyInfo _property) { property = _property; Initialize(property.Name); }
         public DatabaseFilter(string _propertyName) { Initialize(_propertyName); }
@@ -37,6 +39,7 @@ namespace GTRC_Database_Viewer.Models
             {
                 if (filter != value)
                 {
+                    filterProcessCount += 1;
                     filter = value;
                     List<DatabaseFilter<ModelType>> list = [];
                     foreach (DatabaseFilter<ModelType> _filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters) { list.Add(_filter); }
@@ -51,7 +54,7 @@ namespace GTRC_Database_Viewer.Models
                         else { if (list[0].Filter == NoIdFilter) { list[0].Filter = string.Empty; } }
                     }
                     RaisePropertyChanged();
-                    _ = DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].FilterList();
+                    new Thread(ThreadFilterList).Start();
                 }
             }
         }
@@ -90,6 +93,13 @@ namespace GTRC_Database_Viewer.Models
         public void Sort()
         {
             if (property is not null) { DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].SortFilteredList(property); }
+        }
+
+        public void ThreadFilterList()
+        {
+            Thread.Sleep(Math.Max(200, 300 - filterProcessCount * 5));
+            filterProcessCount -= 1;
+            if (filterProcessCount == 0) { Application.Current.Dispatcher.Invoke(new Action(() => DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].FilterList())); }
         }
 
         [JsonIgnore] public UICmd? SortCmd { get; set; }

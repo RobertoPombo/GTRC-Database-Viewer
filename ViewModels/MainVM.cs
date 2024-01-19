@@ -38,12 +38,12 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(Series), new List<Type>() { typeof(Migrations.V0.Series) } },
             { typeof(Season), new List<Type>() { typeof(Migrations.V0.Season) } },
             { typeof(SeasonCarclass), new List<Type>() { typeof(Migrations.V0.SeasonCarclass) } },
-            { typeof(Organization), new List<Type>() { typeof(Organization) } },
-            { typeof(OrganizationUser), new List<Type>() { typeof(OrganizationUser) } },
-            { typeof(Team), new List<Type>() { typeof(Team) } },
+            { typeof(Organization), new List<Type>() { typeof(Migrations.V0.Organization) } },
+            { typeof(OrganizationUser), new List<Type>() { typeof(Migrations.V0.OrganizationUser) } },
+            { typeof(Team), new List<Type>() { typeof(Migrations.V0.Team) } },
             { typeof(Event), new List<Type>() { typeof(Event) } },
             { typeof(EventCarclass), new List<Type>() { typeof(EventCarclass) } },
-            { typeof(EventCar), new List<Type>() { typeof(EventCar) } }
+            { typeof(EventCar), new List<Type>() { typeof(Migrations.V0.EventCar) } }
         };
     }
 }
