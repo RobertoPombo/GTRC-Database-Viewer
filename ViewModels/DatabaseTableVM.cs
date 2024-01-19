@@ -159,7 +159,10 @@ namespace GTRC_Database_Viewer.ViewModels
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(dto);
                 if (response.Item1 == HttpStatusCode.OK) { await GetByUniqProps(Current.Object); }
                 else if (response.Item1 == HttpStatusCode.NotFound) { _ = LoadSql(); }
-                else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
+                else if ((response.Item1 == HttpStatusCode.NotAcceptable || response.Item1 == HttpStatusCode.AlreadyReported) && response.Item2 is not null)
+                {
+                    Current = new DataRow<ModelType>(response.Item2, false);
+                }
             }
         }
 
@@ -194,8 +197,11 @@ namespace GTRC_Database_Viewer.ViewModels
                 updateDto.Dto.Id = Selected.Object.Id;
                 Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
                 if (response.Item1 == HttpStatusCode.OK) { await GetById(Selected.Object.Id); }
-                else if (response.Item1 == HttpStatusCode.Conflict && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
-                else if (response.Item1 == HttpStatusCode.NotFound || response.Item1 == HttpStatusCode.InternalServerError) { await ClearCurrent(); }
+                else if ((response.Item1 == HttpStatusCode.NotAcceptable || response.Item1 == HttpStatusCode.AlreadyReported) && response.Item2 is not null)
+                {
+                    Current = new DataRow<ModelType>(response.Item2, false);
+                }
+                else { await ClearCurrent(); }
             }
         }
 
@@ -267,7 +273,17 @@ namespace GTRC_Database_Viewer.ViewModels
                 {
                     bool found = false;
                     foreach (ModelType oldObj in oldList) { if (newObj.Id == oldObj.Id) { found = true; break; } }
-                    if (found) { UpdateDto<ModelType> updateDto = new(); updateDto.Dto.Model2Dto(newObj); await httpRequest.Update(updateDto); }
+                    if (found)
+                    {
+                        UpdateDto<ModelType> updateDto = new();
+                        updateDto.Dto.Model2Dto(newObj);
+                        Tuple<HttpStatusCode, ModelType?> updateResponse = await httpRequest.Update(updateDto);
+                        if (updateResponse.Item1 == HttpStatusCode.NotAcceptable && updateResponse.Item2 is not null)
+                        {
+                            updateDto.Dto.Model2Dto(updateResponse.Item2);
+                            await httpRequest.Update(updateDto);
+                        }
+                    }
                     else { int deletedId = GlobalValues.NoId; while (deletedId < newObj.Id) { deletedId = await AddSqlForceId(newObj); } }
                 }
                 _ = LoadSql();
@@ -531,6 +547,11 @@ namespace GTRC_Database_Viewer.ViewModels
                 AddDto<ModelType> addDto = new();
                 addDto.Dto.Model2Dto(obj);
                 Tuple<HttpStatusCode, ModelType?> addResponse = await httpRequest.Add(addDto);
+                if (addResponse.Item1 == HttpStatusCode.NotAcceptable && addResponse.Item2 is not null)
+                {
+                    addDto.Dto.Model2Dto(addResponse.Item2);
+                    addResponse = await httpRequest.Add(addDto);
+                }
                 if (addResponse.Item1 == HttpStatusCode.OK && DatabaseVM.UseForceSameId(true))
                 {
                     UniqPropsDto<ModelType> uniqPropsDto = new();

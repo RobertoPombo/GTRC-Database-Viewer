@@ -31,7 +31,7 @@ namespace GTRC_Database_Viewer.Models
             listDropdown.Clear();
             if (Property is not null)
             {
-                Type? TypeForeignId = GlobalValues.GetTypeForeignId(Name);
+                Type? TypeForeignId = Scripts.GetTypeForeignId(Name);
                 Type? NullableType = Nullable.GetUnderlyingType(Property.PropertyType);
                 if (Property.PropertyType == typeof(bool) || (NullableType is not null && NullableType == typeof(bool))) // Bool properties
                 {

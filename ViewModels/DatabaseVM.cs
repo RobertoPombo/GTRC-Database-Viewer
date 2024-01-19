@@ -35,12 +35,12 @@ namespace GTRC_Database_Viewer.ViewModels
             ExportConvertedJsonCmd = new UICmd((o) => ExportConvertedJson());
         }
 
-        public ObservableCollection<KeyValuePair<string, Type>> ModelTypeList
+        public ObservableCollection<KeyValuePair<Type, string>> ModelTypeList
         {
             get
             {
-                ObservableCollection<KeyValuePair<string, Type>> list = [];
-                foreach (Type type in GlobalValues.ModelTypeList) { list.Add(new KeyValuePair<string, Type>(type.Name, type)); }
+                ObservableCollection<KeyValuePair<Type, string>> list = [];
+                foreach (Type type in GlobalValues.ModelTypeList) { list.Add(new KeyValuePair<Type, string>(type, GlobalValues.SqlTableNames[type])); }
                 return list;
             }
         }

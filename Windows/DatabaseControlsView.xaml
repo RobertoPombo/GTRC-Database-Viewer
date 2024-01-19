@@ -14,7 +14,7 @@
                 </Grid.ColumnDefinitions>
                 <ComboBox Grid.Column="0" ItemsSource="{Binding ModelTypeList, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
                           SelectedValue="{Binding ModelType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                          SelectedValuePath="Value" DisplayMemberPath="Key"
+                          SelectedValuePath="Key" DisplayMemberPath="Value"
                           Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,0" Cursor="Hand"/>
                 <Button Grid.Column="1" Command="{Binding DatabaseTableVM.ClearFilterCmd}" HorizontalAlignment="Right"
                         Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="5,0"/>

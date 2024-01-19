@@ -33,10 +33,17 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(Car), new List<Type>() { typeof(Migrations.V0.Car) } },
             { typeof(Role), new List<Type>() { typeof(Role) } },
             { typeof(UserRole), new List<Type>() { typeof(Migrations.V0.UserRole) } },
+            { typeof(Bop), new List<Type>() { typeof(Bop) } },
+            { typeof(BopTrackCar), new List<Type>() { typeof(BopTrackCar) } },
             { typeof(Series), new List<Type>() { typeof(Migrations.V0.Series) } },
             { typeof(Season), new List<Type>() { typeof(Migrations.V0.Season) } },
             { typeof(SeasonCarclass), new List<Type>() { typeof(Migrations.V0.SeasonCarclass) } },
-            { typeof(Event), new List<Type>() { typeof(Event) } }
+            { typeof(Organization), new List<Type>() { typeof(Organization) } },
+            { typeof(OrganizationUser), new List<Type>() { typeof(OrganizationUser) } },
+            { typeof(Team), new List<Type>() { typeof(Team) } },
+            { typeof(Event), new List<Type>() { typeof(Event) } },
+            { typeof(EventCarclass), new List<Type>() { typeof(EventCarclass) } },
+            { typeof(EventCar), new List<Type>() { typeof(EventCar) } }
         };
     }
 }
