@@ -23,7 +23,7 @@ namespace GTRC_Database_Viewer.ViewModels
         private string pathJson = GlobalValues.DataDirectory + typeof(ModelType).Name.ToLower() + ".json";
         private DbApiConnectionConfig? DbApiConnectionConfig;
         private SqlConnectionConfig? SqlConnectionConfig;
-        private HttpRequest<ModelType>? httpRequest;
+        private DbApiRequest<ModelType>? httpRequest;
         private ObservableCollection<DataRow<ModelType>> filteredList = [];
         private DataRow<ModelType>? current;
         private DataRow<ModelType>? selected;
@@ -156,12 +156,12 @@ namespace GTRC_Database_Viewer.ViewModels
                 Current.UpdateObject();
                 AddDto<ModelType> dto = new();
                 dto.Dto.Model2Dto(Current.Object);
-                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Add(dto);
-                if (response.Item1 == HttpStatusCode.OK) { await GetByUniqProps(Current.Object); }
-                else if (response.Item1 == HttpStatusCode.NotFound) { _ = LoadSql(); }
-                else if ((response.Item1 == HttpStatusCode.NotAcceptable || response.Item1 == HttpStatusCode.AlreadyReported) && response.Item2 is not null)
+                DbApiResponse<ModelType> response = await httpRequest.Add(dto);
+                if (response.Status == HttpStatusCode.OK) { await GetByUniqProps(Current.Object); }
+                else if (response.Status == HttpStatusCode.NotFound) { _ = LoadSql(); }
+                else if ((response.Status == HttpStatusCode.NotAcceptable || response.Status == HttpStatusCode.AlreadyReported))
                 {
-                    Current = new DataRow<ModelType>(response.Item2, false);
+                    Current = new DataRow<ModelType>(response.Obj, false);
                 }
             }
         }
@@ -180,8 +180,8 @@ namespace GTRC_Database_Viewer.ViewModels
             Current = null;
             if (httpRequest is not null)
             {
-                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.GetTemp();
-                if (response.Item1 == HttpStatusCode.OK && response.Item2 is not null) { Current = new DataRow<ModelType>(response.Item2, false); }
+                DbApiResponse<ModelType> response = await httpRequest.GetTemp();
+                if (response.Status == HttpStatusCode.OK) { Current = new DataRow<ModelType>(response.Obj, false); }
             }
         }
 
@@ -195,11 +195,11 @@ namespace GTRC_Database_Viewer.ViewModels
                 updateDto.Dto.Model2Dto(Selected.Object);
                 updateDto.Dto.Model2Dto(Current.Object);
                 updateDto.Dto.Id = Selected.Object.Id;
-                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.Update(updateDto);
-                if (response.Item1 == HttpStatusCode.OK) { await GetById(Selected.Object.Id); }
-                else if ((response.Item1 == HttpStatusCode.NotAcceptable || response.Item1 == HttpStatusCode.AlreadyReported) && response.Item2 is not null)
+                DbApiResponse<ModelType> response = await httpRequest.Update(updateDto);
+                if (response.Status == HttpStatusCode.OK) { await GetById(Selected.Object.Id); }
+                else if ((response.Status == HttpStatusCode.NotAcceptable || response.Status == HttpStatusCode.AlreadyReported))
                 {
-                    Current = new DataRow<ModelType>(response.Item2, false);
+                    Current = new DataRow<ModelType>(response.Obj, false);
                 }
                 else { await ClearCurrent(); }
             }
@@ -209,14 +209,14 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             if (httpRequest is not null)
             {
-                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.GetById(id);
-                if (response.Item1 == HttpStatusCode.OK && response.Item2 is not null)
+                DbApiResponse<ModelType> response = await httpRequest.GetById(id);
+                if (response.Status == HttpStatusCode.OK)
                 {
                     for (int modelNr = 0; modelNr < ObjList.Count; modelNr++)
                     {
                         if (ObjList[modelNr].Id == id)
                         {
-                            ObjList[modelNr] = response.Item2;
+                            ObjList[modelNr] = response.Obj;
                             _ = ResetLists(ObjList);
                             OnPublishList();
                             break;
@@ -232,11 +232,11 @@ namespace GTRC_Database_Viewer.ViewModels
             {
                 UniqPropsDto<ModelType> dto = new();
                 dto.Dto.Model2Dto(obj);
-                Tuple<HttpStatusCode, ModelType?> response = await httpRequest.GetByUniqProps(dto);
-                if (response.Item1 == HttpStatusCode.OK && response.Item2 is not null)
+                DbApiResponse<ModelType> response = await httpRequest.GetByUniqProps(dto);
+                if (response.Status == HttpStatusCode.OK)
                 {
-                    if (ObjList.Contains(obj)) { ObjList[ObjList.IndexOf(obj)] = response.Item2; }
-                    else { ObjList.Add(response.Item2); }
+                    if (ObjList.Contains(obj)) { ObjList[ObjList.IndexOf(obj)] = response.Obj; }
+                    else { ObjList.Add(response.Obj); }
                     _ = ResetLists(ObjList);
                     OnPublishList();
                 }
@@ -248,8 +248,8 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             if (httpRequest is not null)
             {
-                Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetAll();
-                if (response.Item1 == HttpStatusCode.OK) { _ = ResetLists(response.Item2); }
+                DbApiResponse<ModelType> response = await httpRequest.GetAll();
+                if (response.Status == HttpStatusCode.OK) { _ = ResetLists(response.List); }
                 else { _ = ResetLists([]); }
             }
             else { _ = ResetLists([]); }
@@ -261,8 +261,8 @@ namespace GTRC_Database_Viewer.ViewModels
             if (httpRequest is not null)
             {
                 List<ModelType> oldList = [];
-                Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetAll();
-                if (response.Item1 == HttpStatusCode.OK) { oldList = response.Item2; }
+                DbApiResponse<ModelType> response = await httpRequest.GetAll();
+                if (response.Status == HttpStatusCode.OK) { oldList = response.List; }
                 foreach (ModelType oldObj in oldList)
                 {
                     bool found = false;
@@ -277,10 +277,10 @@ namespace GTRC_Database_Viewer.ViewModels
                     {
                         UpdateDto<ModelType> updateDto = new();
                         updateDto.Dto.Model2Dto(newObj);
-                        Tuple<HttpStatusCode, ModelType?> updateResponse = await httpRequest.Update(updateDto);
-                        if (updateResponse.Item1 == HttpStatusCode.NotAcceptable && updateResponse.Item2 is not null)
+                        DbApiResponse<ModelType> updateResponse = await httpRequest.Update(updateDto);
+                        if (updateResponse.Status == HttpStatusCode.NotAcceptable)
                         {
-                            updateDto.Dto.Model2Dto(updateResponse.Item2);
+                            updateDto.Dto.Model2Dto(updateResponse.Obj);
                             await httpRequest.Update(updateDto);
                         }
                     }
@@ -374,10 +374,10 @@ namespace GTRC_Database_Viewer.ViewModels
             filteredList.Clear();
             if (allowFilter && httpRequest is not null)
             {
-                Tuple<HttpStatusCode, List<ModelType>> response = await httpRequest.GetByFilter(DatabaseFilter<ModelType>.GetFilterDtos(Filters));
-                if (response.Item1 == HttpStatusCode.OK)
+                DbApiResponse<ModelType> response = await httpRequest.GetByFilter(DatabaseFilter<ModelType>.GetFilterDtos(Filters));
+                if (response.Status == HttpStatusCode.OK)
                 {
-                    for (int objNr = 0; objNr < response.Item2.Count; objNr++) { FilteredList.Add(new DataRow<ModelType>(response.Item2[objNr], true, objNr + 1)); }
+                    for (int objNr = 0; objNr < response.List.Count; objNr++) { FilteredList.Add(new DataRow<ModelType>(response.List[objNr], true, objNr + 1)); }
                 }
             }
             else if (!allowFilter)
@@ -502,13 +502,13 @@ namespace GTRC_Database_Viewer.ViewModels
             else { StateIdComparisonConvertedJson = GlobalWinValues.StateWait; }
 
             if (DbVersion is null || httpRequest is null) { return; }
-            Tuple<HttpStatusCode, List<ModelType>> getAllResponse = await httpRequest.GetAll();
-            if (getAllResponse.Item1 == HttpStatusCode.OK)
+            DbApiResponse<ModelType> getAllResponse = await httpRequest.GetAll();
+            if (getAllResponse.Status == HttpStatusCode.OK)
             {
-                bool allSqlInJson = AllSqlInJson(getAllResponse.Item2, listJson);
+                bool allSqlInJson = AllSqlInJson(getAllResponse.List, listJson);
                 if (!allSqlInJson && allJsonInSql) { StateIdComparisonJson = GlobalWinValues.StateOn; }
 
-                bool allSqlInConvertedJson = AllSqlInJson(getAllResponse.Item2, listConvertedJson);
+                bool allSqlInConvertedJson = AllSqlInJson(getAllResponse.List, listConvertedJson);
                 if (!allSqlInConvertedJson && allConvertedJsonInSql) { StateIdComparisonConvertedJson = GlobalWinValues.StateOn; }
             }
         }
@@ -521,8 +521,8 @@ namespace GTRC_Database_Viewer.ViewModels
                 uniqPropsDto.Dto.Model2Dto(obj);
 
                 if (DbVersion is null || httpRequest is null) { return false; }
-                Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
-                if (getResponse.Item1 != HttpStatusCode.OK || getResponse.Item2 is null || getResponse.Item2.Id != obj.Id) { return false; }
+                DbApiResponse<ModelType> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
+                if (getResponse.Status != HttpStatusCode.OK || getResponse.Obj.Id != obj.Id) { return false; }
             }
             return true;
         }
@@ -546,21 +546,21 @@ namespace GTRC_Database_Viewer.ViewModels
             {
                 AddDto<ModelType> addDto = new();
                 addDto.Dto.Model2Dto(obj);
-                Tuple<HttpStatusCode, ModelType?> addResponse = await httpRequest.Add(addDto);
-                if (addResponse.Item1 == HttpStatusCode.NotAcceptable && addResponse.Item2 is not null)
+                DbApiResponse<ModelType> addResponse = await httpRequest.Add(addDto);
+                if (addResponse.Status == HttpStatusCode.NotAcceptable)
                 {
-                    addDto.Dto.Model2Dto(addResponse.Item2);
+                    addDto.Dto.Model2Dto(addResponse.Obj);
                     addResponse = await httpRequest.Add(addDto);
                 }
-                if (addResponse.Item1 == HttpStatusCode.OK && DatabaseVM.UseForceSameId(true))
+                if (addResponse.Status == HttpStatusCode.OK && DatabaseVM.UseForceSameId(true))
                 {
                     UniqPropsDto<ModelType> uniqPropsDto = new();
                     uniqPropsDto.Dto.Model2Dto(obj);
-                    Tuple<HttpStatusCode, ModelType?> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
-                    if (getResponse.Item1 == HttpStatusCode.OK && getResponse.Item2 is not null && getResponse.Item2.Id != obj.Id)
+                    DbApiResponse<ModelType> getResponse = await httpRequest.GetByUniqProps(uniqPropsDto);
+                    if (getResponse.Status == HttpStatusCode.OK && getResponse.Obj.Id != obj.Id)
                     {
-                        HttpStatusCode deleteResponse = await httpRequest.Delete(getResponse.Item2.Id, true);
-                        if (deleteResponse == HttpStatusCode.OK) { return getResponse.Item2.Id; }
+                        HttpStatusCode deleteResponse = await httpRequest.Delete(getResponse.Obj.Id, true);
+                        if (deleteResponse == HttpStatusCode.OK) { return getResponse.Obj.Id; }
                     }
                 }
             }
