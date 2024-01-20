@@ -60,9 +60,9 @@ namespace GTRC_Database_Viewer.ViewModels
             LoadJsonCmd = new UICmd((o) => LoadJson());
             WriteJsonCmd = new UICmd((o) => WriteJson());
             ClearJsonCmd = new UICmd((o) => ClearJson());
-            ExportJsonCmd = new UICmd((o) => ExportJson());
+            ExportJsonCmd = new UICmd(async (o) => await ExportJson());
             LoadConvertedJsonCmd = new UICmd((o) => LoadConvertedJson());
-            ExportConvertedJsonCmd = new UICmd((o) => ExportConvertedJson());
+            ExportConvertedJsonCmd = new UICmd(async (o) => await ExportConvertedJson());
             LoadDbVersionListCmd = new UICmd((o) => LoadDbVersionList());
             ClearFilterCmd = new UICmd((o) => ClearFilter());
             DbApiConnectionConfigVM.ConfirmApiConnectionEstablished += SetActiveDbApiConnection;
@@ -327,11 +327,11 @@ namespace GTRC_Database_Viewer.ViewModels
             LoadJson();
         }
 
-        public void ExportJson(bool keepValue = false)
+        public async Task ExportJson(bool keepValue = false, bool waitForWriteSql = false)
         {
             if (DatabaseVM.UseForceReseed(true)) { if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }; }
             ObjList = GetJsonList();
-            _ = WriteSql(keepValue);
+            if (waitForWriteSql) { await WriteSql(keepValue); } else { _ = WriteSql(keepValue); }
             DatabaseVM.UseForceReseed(keepValue);
         }
 
@@ -343,11 +343,11 @@ namespace GTRC_Database_Viewer.ViewModels
             OnPublishList();
         }
 
-        public void ExportConvertedJson(bool keepValue = false)
+        public async Task ExportConvertedJson(bool keepValue = false, bool waitForWriteSql = false)
         {
             if (DatabaseVM.UseForceReseed(true)) { if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }; }
             ObjList = GetConvertedJsonList();
-            _ = WriteSql(keepValue);
+            if (waitForWriteSql) { await WriteSql(keepValue); } else { _ = WriteSql(keepValue); }
             DatabaseVM.UseForceReseed(keepValue);
         }
 

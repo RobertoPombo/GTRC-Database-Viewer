@@ -31,8 +31,8 @@ namespace GTRC_Database_Viewer.ViewModels
             if (!File.Exists(pathJson)) { SaveFilters(); }
             RestoreFilters();
             WriteJsonCmd = new UICmd((o) => WriteJson());
-            ExportJsonCmd = new UICmd((o) => ExportJson());
-            ExportConvertedJsonCmd = new UICmd((o) => ExportConvertedJson());
+            ExportJsonCmd = new UICmd(async (o) => await ExportJson());
+            ExportConvertedJsonCmd = new UICmd(async (o) => await ExportConvertedJson());
         }
 
         public ObservableCollection<KeyValuePair<Type, string>> ModelTypeList
@@ -183,16 +183,16 @@ namespace GTRC_Database_Viewer.ViewModels
             foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { databaseTable.WriteJson(); }
         }
 
-        public void ExportJson()
+        public async Task ExportJson()
         {
-            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { databaseTable.ExportJson(true); }
+            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { await databaseTable.ExportJson(true, true); }
             UseForceSameId();
             UseForceReseed();
         }
 
-        public void ExportConvertedJson()
+        public async Task ExportConvertedJson()
         {
-            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { databaseTable.ExportConvertedJson(true); }
+            foreach (dynamic databaseTable in DictDatabaseTableVM.Values) { await databaseTable.ExportConvertedJson(true, true); }
             UseForceSameId();
             UseForceReseed();
         }
