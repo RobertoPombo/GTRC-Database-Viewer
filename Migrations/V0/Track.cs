@@ -3,5 +3,7 @@
     public class Track : GTRC_Basics.Models.Track
     {
         public int AccTimePenDT { set { AccTimePenDtS = (ushort)value; } }
+
+        public string NameGtrc { set { NameGoogleSheets = value; } }
     }
 }

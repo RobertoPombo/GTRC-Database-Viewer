@@ -21,5 +21,7 @@
                 foreach (Carclass obj in V0.Carclass.List) { if (obj.Name == value) { CarclassId = obj.Id; break; } }
             }
         }
+
+        public string NameGtrc { set { NameGoogleSheets = value; } }
     }
 }
