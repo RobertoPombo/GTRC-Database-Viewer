@@ -1,12 +1,9 @@
-﻿using GTRC_Basics;
-
-namespace GTRC_Database_Viewer.Migrations.V0
+﻿namespace GTRC_Database_Viewer.Migrations.V0
 {
     public class Series : GTRC_Basics.Models.Series
     {
         private int simId;
-
-        public new int CommunityId { get { if (V0.Community.List.Count > 0) { return V0.Community.List[0].Id; } else { return GlobalValues.NoId; } } }
+        private string name = DefaultName;
 
         public new int SimId
         {
@@ -17,5 +14,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             }
             set { simId = value; }
         }
+
+        public new string Name { get { return name; } set { name = value.Replace("GTRC ", ""); } }
     }
 }
