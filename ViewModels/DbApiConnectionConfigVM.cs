@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 
 using GTRC_Basics;
@@ -12,15 +9,12 @@ namespace GTRC_Database_Viewer.ViewModels
 {
     public class DbApiConnectionConfigVM : ObservableObject
     {
-        private static readonly string path = GlobalValues.DataDirectory + "config dbapi.json";
-
         private DbApiConnectionConfig? selected;
 
         public DbApiConnectionConfigVM()
         {
-            if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(DbApiConnectionConfig.List, Formatting.Indented), Encoding.Unicode); }
             RestoreJsonCmd = new UICmd((o) => RestoreJson());
-            SaveJsonCmd = new UICmd((o) => SaveJson());
+            SaveJsonCmd = new UICmd((o) => DbApiConnectionConfig.SaveJson());
             AddPresetCmd = new UICmd((o) => AddPreset());
             DelPresetCmd = new UICmd((o) => DelPreset());
             RestoreJson();
@@ -181,24 +175,10 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public void RestoreJson()
         {
-            try
-            {
-                DbApiConnectionConfig.List.Clear();
-                _ = JsonConvert.DeserializeObject<List<DbApiConnectionConfig>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
-                GlobalValues.CurrentLogText = "GTRC-Database-API connection settings restored.";
-            }
-            catch { GlobalValues.CurrentLogText = "Restore GTRC-Database-API connection settings failed!"; }
-            if (DbApiConnectionConfig.List.Count == 0) { _ = new DbApiConnectionConfig(); }
+            DbApiConnectionConfig.LoadJson();
             RaisePropertyChanged(nameof(List));
             DbApiConnectionConfig? activeCon = ConfirmActiveConnection();
             if (activeCon is null) { Selected = DbApiConnectionConfig.List[0]; } else { Selected = activeCon; }
-        }
-
-        public void SaveJson()
-        {
-            string text = JsonConvert.SerializeObject(DbApiConnectionConfig.List, Formatting.Indented);
-            File.WriteAllText(path, text, Encoding.Unicode);
-            GlobalValues.CurrentLogText = "GTRC-Database-API connection settings saved.";
         }
 
         public void AddPreset()
