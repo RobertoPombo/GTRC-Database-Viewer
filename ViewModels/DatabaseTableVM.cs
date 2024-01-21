@@ -13,7 +13,6 @@ using GTRC_Database_Client;
 using GTRC_Database_Viewer.Models;
 using GTRC_WPF;
 using GTRC_Basics.Models.DTOs;
-using GTRC_Database_API.Helpers;
 
 namespace GTRC_Database_Viewer.ViewModels
 {

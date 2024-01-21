@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows;
 
 using GTRC_Basics;
-using GTRC_Database_API.Helpers;
 using GTRC_WPF;
 
 namespace GTRC_Database_Viewer.ViewModels
