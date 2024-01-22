@@ -23,7 +23,7 @@
                     <DataTemplate>
                         <Grid>
                             <TextBox x:Name="InputText" Text="{Binding Value, UpdateSourceTrigger=LostFocus}"
-                                     Style="{StaticResource TextBoxStyle}" Visibility="Visible" Margin="5"/>
+                                     Style="{StaticResource TextBoxStyle}" Visibility="Visible" Margin="5" MaxWidth="300"/>
                             <ComboBox x:Name="ComboText" Visibility="Collapsed" 
                                       ItemsSource="{Binding ListDropdown, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
                                       SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
