@@ -9,7 +9,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition MinWidth="200"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <ItemsControl Grid.Column="0" ItemsSource="{Binding DatabaseTableVM.Current.List}">
                 <ItemsControl.ItemTemplate>
