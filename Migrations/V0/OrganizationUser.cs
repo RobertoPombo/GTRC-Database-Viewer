@@ -4,10 +4,11 @@ namespace GTRC_Database_Viewer.Migrations.V0
 {
     public class OrganizationUser : GTRC_Basics.Models.OrganizationUser
     {
-        private static int nextId = GTRC_Basics.GlobalValues.Id0;
+        private static int nextId = GlobalValues.Id0;
         public static List<OrganizationUser> List = [];
+        public static List<OrganizationUser> ListAdmins = [];
 
-        private int id = GTRC_Basics.GlobalValues.NoId;
+        private int id = GlobalValues.NoId;
 
         public new int Id
         {
@@ -21,8 +22,19 @@ namespace GTRC_Database_Viewer.Migrations.V0
         {
             set
             {
+                IsInvited = false;
                 if (V0.Organization.List.Count > 0) { OrganizationId = V0.Organization.List[0].Id; }
-                foreach (Organization obj in V0.Organization.List) { if (obj.TeamIds.Contains(value)) { OrganizationId = obj.Id; break; } }
+                foreach (Organization obj in V0.Organization.List)
+                {
+                    if (obj.TeamIds.Contains(value))
+                    {
+                        OrganizationId = obj.Id;
+                        IsAdmin = true;
+                        foreach (OrganizationUser ou in ListAdmins) { if (ou.UserId != UserId && ou.OrganizationId == OrganizationId) { IsAdmin = false; break; } }
+                        if (IsAdmin && !ListAdmins.Contains(this)) { ListAdmins.Add(this); }
+                        break;
+                    }
+                }
                 OrganizationUser? organizationUser = null;
                 foreach (OrganizationUser _organizationUser in List)
                 {

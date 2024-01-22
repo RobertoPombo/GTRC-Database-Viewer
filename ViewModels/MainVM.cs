@@ -41,6 +41,7 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(Organization), new List<Type>() { typeof(Migrations.V0.Organization) } },
             { typeof(OrganizationUser), new List<Type>() { typeof(Migrations.V0.OrganizationUser) } },
             { typeof(Team), new List<Type>() { typeof(Migrations.V0.Team) } },
+            { typeof(Entry), new List<Type>() { typeof(Migrations.V0.Entry) } },
             { typeof(Event), new List<Type>() { typeof(Event) } },
             { typeof(EventCarclass), new List<Type>() { typeof(EventCarclass) } },
             { typeof(EventCar), new List<Type>() { typeof(Migrations.V0.EventCar) } }

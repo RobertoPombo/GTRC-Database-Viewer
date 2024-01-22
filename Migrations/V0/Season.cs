@@ -2,7 +2,7 @@
 {
     public class Season : GTRC_Basics.Models.Season
     {
-        public new Byte MinEntriesPerTeam { get { return 2; } }
+        public new byte MinEntriesPerTeam { get { return 2; } }
         public int gridSlotsLimit { set { GridSlotsLimit = (byte)Math.Min(value, byte.MaxValue); } }
         public int carLimitBallast { set { CarLimitBallast = (byte)Math.Min(value, byte.MaxValue); } }
         public int carLimitRestrictor { set { CarLimitRestrictor = (byte)Math.Min(value, byte.MaxValue); } }
@@ -13,8 +13,8 @@
         public DateTime DateCarChangeLimit { set { DateStartCarChangeLimit = value; } }
         public bool GroupCarLimits { set { GroupCarRegristrationLimits = value; } }
         public ushort DaysIgnoreCarLimits { set { DaysIgnoreCarRegristrationLimit = value; } }
-        public Byte GridSlotsLimit { set { MaxGridSlots = value; } }
-        public Byte NoShowLimit { set { MaxNoShows = value; } }
-        public Byte SignOutLimit { set { MaxSignOuts = value; } }
+        public byte GridSlotsLimit { set { MaxGridSlots = value; } }
+        public byte NoShowLimit { set { MaxNoShows = value; } }
+        public byte SignOutLimit { set { MaxSignOuts = value; } }
     }
 }

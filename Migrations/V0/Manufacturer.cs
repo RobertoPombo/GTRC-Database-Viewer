@@ -1,11 +1,13 @@
-﻿namespace GTRC_Database_Viewer.Migrations.V0
+﻿using GTRC_Basics;
+
+namespace GTRC_Database_Viewer.Migrations.V0
 {
     public class Manufacturer : GTRC_Basics.Models.Manufacturer
     {
-        private static int nextId = GTRC_Basics.GlobalValues.Id0;
+        private static int nextId = GlobalValues.Id0;
         public static List<Manufacturer> List = [];
 
-        private int id = GTRC_Basics.GlobalValues.NoId;
+        private int id = GlobalValues.NoId;
         private string? name = null;
 
         public new int Id
