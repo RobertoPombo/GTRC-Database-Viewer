@@ -2,6 +2,6 @@
 {
     public class SeasonCarclass : GTRC_Basics.Models.SeasonCarclass
     {
-        public int id { set { Id = value; SeasonId = value; CarclassId = 3; } }
+        public int id { set { Id = value; SeasonId = value; CarclassId = 3; MaxGridSlots = byte.MaxValue; } }
     }
 }
