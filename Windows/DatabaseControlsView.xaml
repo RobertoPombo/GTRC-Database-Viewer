@@ -20,6 +20,18 @@
                         Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="5,0"/>
             </Grid>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
+                <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Delete childs" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
+                <CheckBox IsChecked="{Binding ForceReseed}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Reseed" Style="{StaticResource LabelStyle}" Margin="0,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
+                <CheckBox IsChecked="{Binding ForceSameId}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Keep Ids" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
+                <CheckBox IsChecked="{Binding AllowIdComparison}" Style="{StaticResource SwitchCheckBoxStyle}"/>
+                <Label Content="Compare Ids" Style="{StaticResource LabelStyle}" Margin="0,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
                 <Button Content="Json Backup" Command="{Binding WriteJsonCmd}"
                         Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="0,0,2,0"/>
                 <Button Content="Json" Command="{Binding ExportJsonCmd}"
@@ -30,14 +42,6 @@
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
                 <Label Foreground="{Binding StateIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
-                <CheckBox IsChecked="{Binding ForceDelete}" Style="{StaticResource SwitchCheckBoxStyle}"/>
-                <Label Content="Delete childs" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
-                <CheckBox IsChecked="{Binding ForceSameId}" Style="{StaticResource SwitchCheckBoxStyle}"/>
-                <Label Content="Keep Ids" Style="{StaticResource LabelStyle}" Margin="0,5,15,5"/>
-                <CheckBox IsChecked="{Binding ForceReseed}" Style="{StaticResource SwitchCheckBoxStyle}"/>
-                <Label Content="Reseed" Style="{StaticResource LabelStyle}" Margin="0,5,5,5"/>
             </StackPanel>
             <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"/>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">

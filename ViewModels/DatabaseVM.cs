@@ -19,6 +19,7 @@ namespace GTRC_Database_Viewer.ViewModels
         private bool forceDelete = false;
         private bool forceSameId = false;
         private bool forceReseed = false;
+        private bool allowIdComparison = false;
 
         public DatabaseVM()
         {
@@ -78,6 +79,12 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             get { return forceReseed; }
             set { if (value != forceReseed) { forceReseed = value; ForceDelete = forceReseed; RaisePropertyChanged(); } }
+        }
+
+        public bool AllowIdComparison
+        {
+            get { return allowIdComparison; }
+            set { if (value != allowIdComparison) { allowIdComparison = value; RaisePropertyChanged(); } }
         }
 
         public Brush StateIdComparisonJson
@@ -149,6 +156,8 @@ namespace GTRC_Database_Viewer.ViewModels
             if (MainVM.Instance?.DatabaseVM?.ForceReseed ?? false) { if (!keepValue) { MainVM.Instance.DatabaseVM.ForceReseed = false; } return true; }
             else { return false; }
         }
+
+        public static bool IsAllowedIdComparison() { return MainVM.Instance?.DatabaseVM?.AllowIdComparison ?? false; }
 
         public static Brush GetStateIdComparisonJson()
         {

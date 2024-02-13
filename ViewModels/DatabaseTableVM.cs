@@ -496,6 +496,8 @@ namespace GTRC_Database_Viewer.ViewModels
             StateIdComparisonJson = GlobalWinValues.StateOff;
             StateIdComparisonConvertedJson = GlobalWinValues.StateOff;
             
+            if (!DatabaseVM.IsAllowedIdComparison()) { return; }
+            
             if (DbVersion is null || httpRequest is null) { return; }
             List<ModelType> listJson = GetJsonList();
             bool allJsonInSql = await AllJsonInSql(listJson);
