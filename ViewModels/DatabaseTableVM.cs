@@ -291,16 +291,16 @@ namespace GTRC_Database_Viewer.ViewModels
             }
         }
 
-        public void ClearSql()
+        public async Task ClearSql()
         {
-            if (DatabaseVM.UseForceReseed(true))
+            if (httpRequest is not null)
             {
-                if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }
-                DatabaseVM.UseForceReseed();
-            }
-            else if (httpRequest is not null)
-            {
-                foreach (ModelType obj in ObjList) { _ = httpRequest.Delete(obj.Id, DatabaseVM.UseForceDelete(true)); }
+                foreach (ModelType obj in ObjList) { await httpRequest.Delete(obj.Id, DatabaseVM.UseForceDelete(true)); }
+                if (DatabaseVM.UseForceReseed(true))
+                {
+                    if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }
+                    DatabaseVM.UseForceReseed();
+                }
                 DatabaseVM.UseForceDelete();
             }
             _ = LoadSql();
@@ -328,7 +328,11 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task ExportJson(bool keepValue = false, bool waitForWriteSql = false)
         {
-            if (DatabaseVM.UseForceReseed(true)) { if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }; }
+            if (DatabaseVM.UseForceReseed(true) && (SqlConnectionConfig?.Connectivity() ?? false) && httpRequest is not null)
+            {
+                foreach (ModelType obj in ObjList) { await httpRequest.Delete(obj.Id, DatabaseVM.UseForceDelete(true)); }
+                SqlConnectionConfig.Reseed(typeof(ModelType));
+            }
             ObjList = GetJsonList();
             if (waitForWriteSql) { await WriteSql(keepValue); } else { _ = WriteSql(keepValue); }
             DatabaseVM.UseForceReseed(keepValue);
@@ -344,7 +348,11 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task ExportConvertedJson(bool keepValue = false, bool waitForWriteSql = false)
         {
-            if (DatabaseVM.UseForceReseed(true)) { if (SqlConnectionConfig?.Connectivity() ?? false) { SqlConnectionConfig.Reseed(typeof(ModelType)); }; }
+            if (DatabaseVM.UseForceReseed(true) && (SqlConnectionConfig?.Connectivity() ?? false) && httpRequest is not null)
+            {
+                foreach (ModelType obj in ObjList) { await httpRequest.Delete(obj.Id, DatabaseVM.UseForceDelete(true)); }
+                SqlConnectionConfig.Reseed(typeof(ModelType));
+            }
             ObjList = GetConvertedJsonList();
             if (waitForWriteSql) { await WriteSql(keepValue); } else { _ = WriteSql(keepValue); }
             DatabaseVM.UseForceReseed(keepValue);
@@ -476,7 +484,7 @@ namespace GTRC_Database_Viewer.ViewModels
                                 }
                             }
                         }
-                        newList.Add(Mapper<ModelType>.Map(newObj, new ModelType()));
+                        newList.Add(Scripts.Map(newObj, new ModelType()));
                     }
                 }
             }
@@ -487,7 +495,7 @@ namespace GTRC_Database_Viewer.ViewModels
         {
             StateIdComparisonJson = GlobalWinValues.StateOff;
             StateIdComparisonConvertedJson = GlobalWinValues.StateOff;
-
+            
             if (DbVersion is null || httpRequest is null) { return; }
             List<ModelType> listJson = GetJsonList();
             bool allJsonInSql = await AllJsonInSql(listJson);

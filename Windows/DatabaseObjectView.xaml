@@ -27,7 +27,8 @@
                             <ComboBox x:Name="ComboText" Visibility="Collapsed" 
                                       ItemsSource="{Binding ListDropdown, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
                                       SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                      Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
+                                      Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5"
+                                      Cursor="Hand" MaxWidth="300"/>
                             <CheckBox x:Name="CheckText" Visibility="Collapsed"
                                       Style="{StaticResource SwitchCheckBoxStyle}" HorizontalAlignment="Left" Margin="5"/>
                         </Grid>

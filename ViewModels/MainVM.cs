@@ -33,6 +33,7 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(Car), new List<Type>() { typeof(Migrations.V0.Car) } },
             { typeof(Role), new List<Type>() { typeof(Role) } },
             { typeof(UserRole), new List<Type>() { typeof(Migrations.V0.UserRole) } },
+            { typeof(UserDatetime), new List<Type>() { typeof(Migrations.V0.UserDatetime) } },
             { typeof(Bop), new List<Type>() { typeof(Bop) } },
             { typeof(BopTrackCar), new List<Type>() { typeof(BopTrackCar) } },
             { typeof(Series), new List<Type>() { typeof(Migrations.V0.Series) } },
@@ -42,9 +43,14 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(OrganizationUser), new List<Type>() { typeof(Migrations.V0.OrganizationUser) } },
             { typeof(Team), new List<Type>() { typeof(Migrations.V0.Team) } },
             { typeof(Entry), new List<Type>() { typeof(Migrations.V0.Entry) } },
-            { typeof(Event), new List<Type>() { typeof(Event) } },
+            { typeof(EntryDatetime), new List<Type>() { typeof(Migrations.V0.EntryDatetime) } },
+            { typeof(Event), new List<Type>() { typeof(Migrations.V0.Event) } },
             { typeof(EventCarclass), new List<Type>() { typeof(EventCarclass) } },
-            { typeof(EventCar), new List<Type>() { typeof(Migrations.V0.EventCar) } }
+            { typeof(EventCar), new List<Type>() { typeof(Migrations.V0.EventCar) } },
+            { typeof(EntryEvent), new List<Type>() { typeof(Migrations.V0.EntryEvent) } },
+            { typeof(EntryUserEvent), new List<Type>() { typeof(EntryUserEvent) } },
+            { typeof(Pointssystem), new List<Type>() { typeof(Pointssystem) } },
+            { typeof(PointssystemPosition), new List<Type>() { typeof(Migrations.V0.PointssystemPosition) } }
         };
     }
 }

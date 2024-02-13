@@ -2,9 +2,9 @@
 {
     public class Organization : GTRC_Basics.Models.Organization
     {
-        private static readonly List<string> del = [" - ", " #", " | ", " ("];
+        private static readonly List<string> del = [" - ", " #", " | ", " (",];
         private static readonly List<string> apx = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
-        private static readonly List<string> rep = [" ", "-", "_", ".", "team", "simracing", "eracing", "racing", "motorsports", "motorsport", "esports", "esport", "sport", "performance", "junior"];
+        private static readonly List<string> rep = [" ", "-", "_", ".", ",", "(", ")", "team", "simracing", "eracing", "racing", "motorsports", "motorsport", "esports", "esport", "sport", "performance", "junior"];
         private static int nextId = GTRC_Basics.GlobalValues.Id0;
         public static List<Organization> List = [];
 
@@ -56,6 +56,15 @@
                     List.Add(this);
                     id = nextId;
                     nextId++;
+                }
+                List<int> newTeamIds = [];
+                foreach (int _oldTeamId in TeamIds) { foreach (Team _team in V0.Team.List) { if (_oldTeamId == _team.OldId) { newTeamIds.Add(_team.Id); } } }
+                foreach (Entry _entry in V0.Entry.List)
+                {
+                    if (newTeamIds.Contains(_entry.TeamId))
+                    {
+                        if (_entry.RegisterDate < RegisterDate) { RegisterDate = _entry.RegisterDate; }
+                    }
                 }
             }
         }
