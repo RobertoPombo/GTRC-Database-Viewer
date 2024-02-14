@@ -1,4 +1,6 @@
-﻿namespace GTRC_Database_Viewer.Migrations.V0
+﻿using GTRC_Basics;
+
+namespace GTRC_Database_Viewer.Migrations.V0
 {
     public class Season : GTRC_Basics.Models.Season
     {
@@ -6,11 +8,63 @@
         public int carLimitBallast { set { CarLimitBallast = (byte)Math.Min(value, byte.MaxValue); } }
         public int carLimitRestrictor { set { CarLimitRestrictor = (byte)Math.Min(value, byte.MaxValue); } }
         public int carLimitRegisterLimit { set { CarRegristrationLimit = (byte)Math.Min(value, byte.MaxValue); } }
-        public DateTime DateRegisterLimit { set { DateStartCarRegristrationLimit = value; } }
-        public DateTime DateCarChangeLimit { set { DateStartCarChangeLimit = value; } }
         public bool GroupCarLimits { set { GroupCarRegristrationLimits = value; } }
         public ushort DaysIgnoreCarLimits { set { DaysIgnoreCarRegristrationLimit = value; } }
         public int NoShowLimit { set { MaxNoShows = (byte)Math.Min(value, byte.MaxValue); } }
         public int SignOutLimit { set { MaxSignOuts = (byte)Math.Min(value, byte.MaxValue); } }
+
+        private DateTime dateStartRegistration = DateTime.UtcNow;
+        private DateTime dateEndRegistration = DateTime.UtcNow;
+        private DateTime dateBoPFreeze = DateTime.UtcNow;
+        public new DateTime DateStartRegistration
+        {
+            get { return dateStartRegistration; }
+            set
+            {
+                if (value > GlobalValues.DateTimeMaxValue) { dateStartRegistration = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { dateStartRegistration = GlobalValues.DateTimeMinValue; }
+                else { dateStartRegistration = value; }
+            }
+        }
+        public new DateTime DateEndRegistration
+        {
+            get { return dateEndRegistration; }
+            set
+            {
+                if (value > GlobalValues.DateTimeMaxValue) { dateEndRegistration = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { dateEndRegistration = GlobalValues.DateTimeMinValue; }
+                else { dateEndRegistration = value; }
+            }
+        }
+        public DateTime DateRegisterLimit
+        {
+            get { return DateStartCarRegristrationLimit; }
+            set
+            {
+                if (value > GlobalValues.DateTimeMaxValue) { DateStartCarRegristrationLimit = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { DateStartCarRegristrationLimit = GlobalValues.DateTimeMinValue; }
+                else { DateStartCarRegristrationLimit = value; }
+            }
+        }
+        public DateTime DateCarChangeLimit
+        {
+            get { return DateStartCarChangeLimit; }
+            set
+            {
+                if (value > GlobalValues.DateTimeMaxValue) { DateStartCarChangeLimit = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { DateStartCarChangeLimit = GlobalValues.DateTimeMinValue; }
+                else { DateStartCarChangeLimit = value; }
+            }
+        }
+        public new DateTime DateBoPFreeze
+        {
+            get { return dateBoPFreeze; }
+            set
+            {
+                if (value > GlobalValues.DateTimeMaxValue) { dateBoPFreeze = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { dateBoPFreeze = GlobalValues.DateTimeMinValue; }
+                else { dateBoPFreeze = value; }
+            }
+        }
     }
 }

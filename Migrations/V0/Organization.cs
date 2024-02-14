@@ -1,4 +1,6 @@
-﻿namespace GTRC_Database_Viewer.Migrations.V0
+﻿using GTRC_Basics;
+
+namespace GTRC_Database_Viewer.Migrations.V0
 {
     public class Organization : GTRC_Basics.Models.Organization
     {
@@ -66,6 +68,18 @@
                         if (_entry.RegisterDate < RegisterDate) { RegisterDate = _entry.RegisterDate; }
                     }
                 }
+            }
+        }
+
+        private DateTime registerDate = DateTime.UtcNow;
+        public new DateTime RegisterDate
+        {
+            get { return registerDate; }
+            set
+            {
+                if (value > GlobalValues.DateTimeMaxValue) { registerDate = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { registerDate = GlobalValues.DateTimeMinValue; }
+                else { registerDate = value; }
             }
         }
     }
