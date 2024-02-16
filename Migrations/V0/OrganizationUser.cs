@@ -30,7 +30,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
                     {
                         OrganizationId = obj.Id;
                         IsAdmin = true;
-                        foreach (OrganizationUser ou in ListAdmins) { if (ou.UserId != UserId && ou.OrganizationId == OrganizationId) { IsAdmin = false; break; } }
+                        //foreach (OrganizationUser ou in ListAdmins) { if (ou.UserId != UserId && ou.OrganizationId == OrganizationId) { IsAdmin = false; break; } }
                         if (IsAdmin && !ListAdmins.Contains(this)) { ListAdmins.Add(this); }
                         break;
                     }

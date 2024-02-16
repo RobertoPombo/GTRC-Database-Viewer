@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:GTRC_Database_Viewer"
              xmlns:viewModel="clr-namespace:GTRC_Database_Viewer.ViewModels"
              xmlns:view="clr-namespace:GTRC_Database_Viewer.Windows"
+             xmlns:viewModelUC="clr-namespace:GTRC_WPF_UserControls.ViewModels;assembly=GTRC_WPF_UserControls"
+             xmlns:viewUC="clr-namespace:GTRC_WPF_UserControls.Windows;assembly=GTRC_WPF_UserControls"
              StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -26,11 +28,11 @@
             <DataTemplate DataType="{x:Type viewModel:DatabaseVM}">
                 <view:DatabaseView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:DbApiConnectionConfigVM}">
-                <view:ConnectionConfigView/>
+            <DataTemplate DataType="{x:Type viewModelUC:DbApiConnectionConfigVM}">
+                <viewUC:ConnectionConfigView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:SqlConnectionConfigVM}">
-                <view:ConnectionConfigView/>
+            <DataTemplate DataType="{x:Type viewModelUC:SqlConnectionConfigVM}">
+                <viewUC:ConnectionConfigView/>
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
