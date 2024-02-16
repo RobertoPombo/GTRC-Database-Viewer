@@ -23,6 +23,8 @@ namespace GTRC_Database_Viewer.Migrations.V0
             }
         }
 
+        public ushort Racenumber { get { return RaceNumber; } set { RaceNumber = value; PreferedRaceNumber = value; } }
+
         private int teamId = GlobalValues.NoId;
         public new int TeamId
         {

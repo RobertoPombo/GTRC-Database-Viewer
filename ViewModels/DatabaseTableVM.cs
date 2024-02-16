@@ -452,7 +452,7 @@ namespace GTRC_Database_Viewer.ViewModels
             }
             RaisePropertyChanged(nameof(DbVersionList));
             if (DbVersionList.Count == 0) { _ = SetStateIdComparison(); }
-            else { dbVersion = null; DbVersion = DbVersionList[^1]; }
+            else { dbVersion = null; DbVersion = DbVersionList[^1]; _ = GetConvertedJsonList(); }
         }
 
         public List<ModelType> GetJsonList()
