@@ -15,6 +15,8 @@ using GTRC_WPF;
 using GTRC_Basics.Models.DTOs;
 using GTRC_WPF_UserControls.ViewModels;
 using GTRC_Basics.Configs;
+using GTRC_Database_Client.Requests;
+using GTRC_Database_Client.Responses;
 
 namespace GTRC_Database_Viewer.ViewModels
 {
@@ -57,7 +59,7 @@ namespace GTRC_Database_Viewer.ViewModels
             UpdateCmd = new UICmd((o) => _ = Update());
             LoadSqlCmd = new UICmd((o) => _ = LoadSql());
             WriteSqlCmd = new UICmd((o) => _ = WriteSql());
-            ClearSqlCmd = new UICmd((o) => ClearSql());
+            ClearSqlCmd = new UICmd((o) => _ = ClearSql());
             LoadJsonCmd = new UICmd((o) => LoadJson());
             WriteJsonCmd = new UICmd((o) => WriteJson());
             ClearJsonCmd = new UICmd((o) => ClearJson());
