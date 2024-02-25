@@ -6,11 +6,11 @@ namespace GTRC_Database_Viewer.Migrations.V0
     {
         private static readonly List<string> del = [" - ", " #", " | ", " (",];
         private static readonly List<string> apx = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
-        private static readonly List<string> rep = [" ", "-", "_", ".", ",", "(", ")", "team", "simracing", "eracing", "racing", "motorsports", "motorsport", "esports", "esport", "sport", "performance", "junior"];
-        private static int nextId = GTRC_Basics.GlobalValues.Id0;
+        private static readonly List<string> rep = [" ", "-", "_", ".", ",", "(", ")", "team", "simracing", "eracing", "racing", "motorsports", "motorsport", "esports", "esport", "sport", "performance", "junior", "gold", "silver", "bronze"];
+        private static int nextId = GlobalValues.Id0;
         public static List<Organization> List = [];
 
-        private int id = GTRC_Basics.GlobalValues.NoId;
+        private int id = GlobalValues.NoId;
         private string? name = null;
 
         public new int Id
