@@ -8,9 +8,9 @@ namespace GTRC_Database_Viewer.Migrations.V0
         public new byte MaxEntriesPerTeam { get { return 2; } }
         public int carLimitBallast { set { CarLimitBallast = (byte)Math.Min(value, byte.MaxValue); } }
         public int carLimitRestrictor { set { CarLimitRestrictor = (byte)Math.Min(value, byte.MaxValue); } }
-        public int carLimitRegisterLimit { set { CarRegristrationLimit = (byte)Math.Min(value, byte.MaxValue); } }
-        public bool GroupCarLimits { set { GroupCarRegristrationLimits = value; } }
-        public ushort DaysIgnoreCarLimits { set { DaysIgnoreCarRegristrationLimit = value; } }
+        public int carLimitRegisterLimit { set { CarRegistrationLimit = (byte)Math.Min(value, byte.MaxValue); } }
+        public bool GroupCarLimits { set { GroupCarRegistrationLimits = value; } }
+        public ushort DaysIgnoreCarLimits { set { DaysIgnoreCarRegistrationLimit = value; } }
         public int NoShowLimit { set { MaxNoShows = (byte)Math.Min(value, byte.MaxValue); } }
         public int SignOutLimit { set { MaxSignOuts = (byte)Math.Min(value, byte.MaxValue); } }
 
@@ -39,12 +39,12 @@ namespace GTRC_Database_Viewer.Migrations.V0
         }
         public DateTime DateRegisterLimit
         {
-            get { return DateStartCarRegristrationLimit; }
+            get { return DateStartCarRegistrationLimit; }
             set
             {
-                if (value > GlobalValues.DateTimeMaxValue) { DateStartCarRegristrationLimit = GlobalValues.DateTimeMaxValue; }
-                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { DateStartCarRegristrationLimit = GlobalValues.DateTimeMinValue; }
-                else { DateStartCarRegristrationLimit = value; }
+                if (value > GlobalValues.DateTimeMaxValue) { DateStartCarRegistrationLimit = GlobalValues.DateTimeMaxValue; }
+                else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { DateStartCarRegistrationLimit = GlobalValues.DateTimeMinValue; }
+                else { DateStartCarRegistrationLimit = value; }
             }
         }
         public DateTime DateCarChangeLimit

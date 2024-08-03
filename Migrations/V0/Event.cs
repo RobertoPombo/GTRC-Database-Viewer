@@ -6,7 +6,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
     {
         public static List<Event> List = [];
 
-        private int id = GTRC_Basics.GlobalValues.NoId;
+        private int id = GlobalValues.NoId;
 
         public new int Id
         {
@@ -34,5 +34,10 @@ namespace GTRC_Database_Viewer.Migrations.V0
                 else { date = value; }
             }
         }
+
+        public new ushort SessionOvertimeSeconds { get { return 140; } set { } }
+        public new ushort PreRaceWaitingTimeSeconds { get { return 120; } set { } }
+        public new ushort PostQualiSeconds { get { return 30; } set { } }
+        public new ushort PostRaceSeconds { get { return 140; } set { } }
     }
 }

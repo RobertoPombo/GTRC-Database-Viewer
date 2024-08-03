@@ -51,7 +51,14 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(EntryEvent), new List<Type>() { typeof(Migrations.V0.EntryEvent) } },
             { typeof(EntryUserEvent), new List<Type>() { typeof(EntryUserEvent) } },
             { typeof(Pointssystem), new List<Type>() { typeof(Pointssystem) } },
-            { typeof(PointssystemPosition), new List<Type>() { typeof(Migrations.V0.PointssystemPosition) } }
+            { typeof(PointssystemPosition), new List<Type>() { typeof(Migrations.V0.PointssystemPosition) } },
+            { typeof(Server), new List<Type>() { typeof(Server) } },
+            { typeof(Session), new List<Type>() { typeof(Migrations.V0.Session) } },
+            { typeof(Resultsfile), new List<Type>() { typeof(Resultsfile) } },
+            { typeof(Lap), new List<Type>() { typeof(Lap) } },
+            { typeof(Leaderboardline), new List<Type>() { typeof(Leaderboardline) } },
+            { typeof(Incident), new List<Type>() { typeof(Incident) } },
+            { typeof(IncidentEntry), new List<Type>() { typeof(IncidentEntry) } }
         };
     }
 }
