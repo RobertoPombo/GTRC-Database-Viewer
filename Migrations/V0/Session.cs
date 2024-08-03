@@ -5,6 +5,9 @@ namespace GTRC_Database_Viewer.Migrations.V0
     public class Session : GTRC_Basics.Models.Session
     {
         private int gridSessionId = GlobalValues.NoId;
+        public TimeSpan StartTime { set { StartTimeOffsetMin = (ushort)Math.Min(Math.Round(value.TotalMinutes, 0), ushort.MaxValue); } }
+        public TimeSpan Duration { set { DurationMin = (ushort)Math.Min(Math.Round(value.TotalMinutes, 0), ushort.MaxValue); } }
+        public TimeSpan IngameDuration { set { if (DurationMin > 0) { SessionsCount = (ushort)Math.Min(Math.Round(value.TotalMinutes / DurationMin, 0), ushort.MaxValue); } } }
         public int sessionType
         {
             set
