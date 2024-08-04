@@ -17,7 +17,7 @@
 
         public new string Name { get { return name; } set { name = value.Replace("GTRC ", ""); } }
 
-        public new ulong DiscordRegistrationChannelId { get { return 1200108297068494899; return 1008453364448768070; } }
+        public new ulong DiscordRegistrationChannelId { get { return 1267807353458266112; return 1008453364448768070; } }
 
         public new ulong DiscordLogChannelId { get { return 926787693227147274; return 1004802942190243901; } }
     }
