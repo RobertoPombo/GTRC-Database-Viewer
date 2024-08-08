@@ -79,7 +79,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { registerDate = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { registerDate = GlobalValues.DateTimeMinValue; }
-                else { registerDate = value; }
+                else { registerDate = value.ToUniversalTime(); }
             }
         }
     }

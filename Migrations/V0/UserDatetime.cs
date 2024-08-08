@@ -18,7 +18,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { date = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { date = GlobalValues.DateTimeMinValue; }
-                else { date = value; }
+                else { date = value.ToUniversalTime(); }
             }
         }
     }

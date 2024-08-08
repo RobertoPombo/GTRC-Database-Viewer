@@ -20,7 +20,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { signInDate = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { signInDate = GlobalValues.DateTimeMinValue; }
-                else { signInDate = value; }
+                else { signInDate = value.ToUniversalTime(); }
             }
         }
     }

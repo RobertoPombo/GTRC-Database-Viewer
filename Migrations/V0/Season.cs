@@ -24,7 +24,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { dateStartRegistration = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { dateStartRegistration = GlobalValues.DateTimeMinValue; }
-                else { dateStartRegistration = value; }
+                else { dateStartRegistration = value.ToUniversalTime(); }
             }
         }
         public new DateTime DateEndRegistration
@@ -34,7 +34,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { dateEndRegistration = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { dateEndRegistration = GlobalValues.DateTimeMinValue; }
-                else { dateEndRegistration = value; }
+                else { dateEndRegistration = value.ToUniversalTime(); }
             }
         }
         public DateTime DateRegisterLimit
@@ -44,7 +44,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { DateStartCarRegistrationLimit = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { DateStartCarRegistrationLimit = GlobalValues.DateTimeMinValue; }
-                else { DateStartCarRegistrationLimit = value; }
+                else { DateStartCarRegistrationLimit = value.ToUniversalTime(); }
             }
         }
         public DateTime DateCarChangeLimit
@@ -54,7 +54,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { DateStartCarChangeLimit = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { DateStartCarChangeLimit = GlobalValues.DateTimeMinValue; }
-                else { DateStartCarChangeLimit = value; }
+                else { DateStartCarChangeLimit = value.ToUniversalTime(); }
             }
         }
         public new DateTime DateBoPFreeze
@@ -64,7 +64,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
             {
                 if (value > GlobalValues.DateTimeMaxValue) { dateBoPFreeze = GlobalValues.DateTimeMaxValue; }
                 else if (value < new DateTime(DateTime.MinValue.Year + 1801, 1, 1, 0, 0, 0, 0, DateTime.MinValue.Kind)) { dateBoPFreeze = GlobalValues.DateTimeMinValue; }
-                else { dateBoPFreeze = value; }
+                else { dateBoPFreeze = value.ToUniversalTime(); }
             }
         }
 
