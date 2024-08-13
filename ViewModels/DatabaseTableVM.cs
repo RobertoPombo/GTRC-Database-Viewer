@@ -32,8 +32,8 @@ namespace GTRC_Database_Viewer.ViewModels
         private DataRow<ModelType>? selected;
         private ObservableCollection<string> dbVersionList = [];
         private string? dbVersion;
-        private Brush stateIdComparisonJson = GlobalWinValues.StateOff;
-        private Brush stateIdComparisonConvertedJson = GlobalWinValues.StateOff;
+        private StateBackgroundWorker stateIdComparisonJson = StateBackgroundWorker.Off;
+        private StateBackgroundWorker stateIdComparisonConvertedJson = StateBackgroundWorker.Off;
         private ObservableCollection<DatabaseFilter<ModelType>> filters = [];
         private int selectedId = GlobalValues.NoId;
         private SortState sortState = new();
@@ -71,6 +71,7 @@ namespace GTRC_Database_Viewer.ViewModels
             DbApiConnectionConfigVM.ConfirmApiConnectionEstablished += SetActiveDbApiConnection;
             SqlConnectionConfigVM.ConfirmSqlConnectionEstablished += SetActiveSqlConnection;
             DatabaseTableVM<GTRC_Basics.Models.Color>.PublishList += UpdateStateColors;
+            GlobalWinValues.StateBackgroundWorkerColorsUpdated += RefreshStateColor;
         }
 
         public async void SetActiveDbApiConnection()
@@ -128,26 +129,42 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public string DbVersionName { get { return "Json v" + DbVersionNr.ToString(); } } // Sollte am besten im Frontend konvertiert werden
 
-        public Brush StateIdComparisonJson
+        public StateBackgroundWorker StateIdComparisonJson
         {
             get { return stateIdComparisonJson; }
             set
             {
                 stateIdComparisonJson = value;
-                RaisePropertyChanged();
-                if (MainVM.Instance?.DatabaseVM is not null) { MainVM.Instance.DatabaseVM.StateIdComparisonJson = GlobalWinValues.StateRunWait; }
+                RaisePropertyChanged(nameof(StateColorIdComparisonJson));
+                if (MainVM.Instance?.DatabaseVM is not null)
+                {
+                    MainVM.Instance.DatabaseVM.StateColorIdComparisonJson = GlobalWinValues.ColorsStateBackgroundWorker[StateBackgroundWorker.RunWait];
+                }
             }
         }
 
-        public Brush StateIdComparisonConvertedJson
+        public StateBackgroundWorker StateIdComparisonConvertedJson
         {
             get { return stateIdComparisonConvertedJson; }
             set
             {
                 stateIdComparisonConvertedJson = value;
-                RaisePropertyChanged();
-                if (MainVM.Instance?.DatabaseVM is not null) { MainVM.Instance.DatabaseVM.StateIdComparisonConvertedJson = GlobalWinValues.StateRunWait; }
+                RaisePropertyChanged(nameof(StateColorIdComparisonConvertedJson));
+                if (MainVM.Instance?.DatabaseVM is not null)
+                {
+                    MainVM.Instance.DatabaseVM.StateColorIdComparisonConvertedJson = GlobalWinValues.ColorsStateBackgroundWorker[StateBackgroundWorker.RunWait];
+                }
             }
+        }
+
+        public Brush StateColorIdComparisonJson
+        {
+            get { return GlobalWinValues.ColorsStateBackgroundWorker[StateIdComparisonJson]; }
+        }
+
+        public Brush StateColorIdComparisonConvertedJson
+        {
+            get { return GlobalWinValues.ColorsStateBackgroundWorker[StateIdComparisonConvertedJson]; }
         }
 
         public ObservableCollection<DatabaseFilter<ModelType>> Filters { get { return filters; } set { filters = value; RaisePropertyChanged(); } }
@@ -497,34 +514,36 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public async Task SetStateIdComparison()
         {
-            StateIdComparisonJson = GlobalWinValues.StateOff;
-            StateIdComparisonConvertedJson = GlobalWinValues.StateOff;
+            StateIdComparisonJson = StateBackgroundWorker.Off;
+            StateIdComparisonConvertedJson = StateBackgroundWorker.Off;
             
             if (!DatabaseVM.IsAllowedIdComparison()) { return; }
             
             if (DbVersion is null || httpRequest is null) { return; }
             List<ModelType> listJson = GetJsonList();
             bool allJsonInSql = await AllJsonInSql(listJson);
-            if (allJsonInSql) { StateIdComparisonJson = GlobalWinValues.StateRun; }
-            else { StateIdComparisonJson = GlobalWinValues.StateWait; }
+            if (allJsonInSql) { StateIdComparisonJson = StateBackgroundWorker.Run; }
+            else { StateIdComparisonJson = StateBackgroundWorker.Wait; }
 
             if (DbVersion is null || httpRequest is null) { return; }
             List<ModelType> listConvertedJson = GetConvertedJsonList();
             bool allConvertedJsonInSql = await AllJsonInSql(listConvertedJson);
-            if (allConvertedJsonInSql) { StateIdComparisonConvertedJson = GlobalWinValues.StateRun; }
-            else { StateIdComparisonConvertedJson = GlobalWinValues.StateWait; }
+            if (allConvertedJsonInSql) { StateIdComparisonConvertedJson = StateBackgroundWorker.Run; }
+            else { StateIdComparisonConvertedJson = StateBackgroundWorker.Wait; }
 
             if (DbVersion is null || httpRequest is null) { return; }
             DbApiListResponse<ModelType> getAllResponse = await httpRequest.GetAll();
             if (getAllResponse.Status == HttpStatusCode.OK)
             {
                 bool allSqlInJson = AllSqlInJson(getAllResponse.List, listJson);
-                if (!allSqlInJson && allJsonInSql) { StateIdComparisonJson = GlobalWinValues.StateOn; }
+                if (!allSqlInJson && allJsonInSql) { StateIdComparisonJson = StateBackgroundWorker.On; }
 
                 bool allSqlInConvertedJson = AllSqlInJson(getAllResponse.List, listConvertedJson);
-                if (!allSqlInConvertedJson && allConvertedJsonInSql) { StateIdComparisonConvertedJson = GlobalWinValues.StateOn; }
+                if (!allSqlInConvertedJson && allConvertedJsonInSql) { StateIdComparisonConvertedJson = StateBackgroundWorker.On; }
             }
         }
+
+        public void RefreshStateColor() { RaisePropertyChanged(nameof(StateIdComparisonJson)); RaisePropertyChanged(nameof(StateIdComparisonConvertedJson)); }
 
         public async Task<bool> AllJsonInSql(List<ModelType> list)
         {

@@ -35,7 +35,12 @@ namespace GTRC_Database_Viewer.Models
                 Type? NullableType = Nullable.GetUnderlyingType(Property.PropertyType);
                 if (Property.PropertyType == typeof(bool) || (NullableType is not null && NullableType == typeof(bool))) // Bool properties
                 {
-                    if (retFull) { if (value) { Color = GlobalWinValues.StateRun; } else { Color = GlobalWinValues.StateWait; } DataType = DataDisplayType.Color; }
+                    if (retFull)
+                    {
+                        if (value) { Color = GlobalWinValues.ColorsStateBackgroundWorker[StateBackgroundWorker.Run]; }
+                        else { Color = GlobalWinValues.ColorsStateBackgroundWorker[StateBackgroundWorker.Wait]; }
+                        DataType = DataDisplayType.Color;
+                    }
                     else { DataType = DataDisplayType.Checkbox; }
                 }
                 else if (!retFull && ((NullableType is not null && NullableType.IsEnum) || (NullableType is null && Property.PropertyType.IsEnum))) // Enum properties

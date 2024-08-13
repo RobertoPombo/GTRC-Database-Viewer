@@ -67,11 +67,5 @@ namespace GTRC_Database_Viewer.Migrations.V0
                 else { dateBoPFreeze = value.ToUniversalTime(); }
             }
         }
-
-        public new ulong DiscordDriverRoleId { get { return 999414174381789184; } }
-
-        public new ulong DiscordRegistrationChannelId { get { return 1267807353458266112; return 1008453364448768070; } }
-
-        public new ulong DiscordTrackReportChannelId { get { return 999415000005365880; return 1004802942190243901; } }
     }
 }

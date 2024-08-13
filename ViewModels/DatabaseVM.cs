@@ -34,6 +34,7 @@ namespace GTRC_Database_Viewer.ViewModels
             WriteJsonCmd = new UICmd((o) => WriteJson());
             ExportJsonCmd = new UICmd(async (o) => await ExportJson());
             ExportConvertedJsonCmd = new UICmd(async (o) => await ExportConvertedJson());
+            GlobalWinValues.StateBackgroundWorkerColorsUpdated += RefreshStateColor;
         }
 
         public ObservableCollection<KeyValuePair<Type, string>> ModelTypeList
@@ -87,15 +88,15 @@ namespace GTRC_Database_Viewer.ViewModels
             set { if (value != allowIdComparison) { allowIdComparison = value; RaisePropertyChanged(); } }
         }
 
-        public Brush StateIdComparisonJson
+        public Brush StateColorIdComparisonJson
         {
-            get { return GetStateIdComparisonJson(); }
+            get { return GlobalWinValues.ColorsStateBackgroundWorker[GetStateIdComparisonJson()]; }
             set { RaisePropertyChanged(); }
         }
 
-        public Brush StateIdComparisonConvertedJson
+        public Brush StateColorIdComparisonConvertedJson
         {
-            get { return GetStateIdComparisonConvertedJson(); }
+            get { return GlobalWinValues.ColorsStateBackgroundWorker[GetStateIdComparisonConvertedJson()]; }
             set { RaisePropertyChanged(); }
         }
 
@@ -159,11 +160,11 @@ namespace GTRC_Database_Viewer.ViewModels
 
         public static bool IsAllowedIdComparison() { return MainVM.Instance?.DatabaseVM?.AllowIdComparison ?? false; }
 
-        public static Brush GetStateIdComparisonJson()
+        public static StateBackgroundWorker GetStateIdComparisonJson()
         {
-            Brush stateId = GlobalWinValues.StateOff;
-            List<Brush> states = [GlobalWinValues.StateRun, GlobalWinValues.StateOn, GlobalWinValues.StateWait];
-            foreach (Brush state in states)
+            StateBackgroundWorker stateId = StateBackgroundWorker.Off;
+            List<StateBackgroundWorker> states = [StateBackgroundWorker.Run, StateBackgroundWorker.On, StateBackgroundWorker.Wait];
+            foreach (StateBackgroundWorker state in states)
             {
                 foreach (dynamic databaseTable in DictDatabaseTableVM.Values)
                 {
@@ -173,11 +174,11 @@ namespace GTRC_Database_Viewer.ViewModels
             return stateId;
         }
 
-        public static Brush GetStateIdComparisonConvertedJson()
+        public static StateBackgroundWorker GetStateIdComparisonConvertedJson()
         {
-            Brush stateId = GlobalWinValues.StateOff;
-            List<Brush> states = [GlobalWinValues.StateRun, GlobalWinValues.StateOn, GlobalWinValues.StateWait];
-            foreach (Brush state in states)
+            StateBackgroundWorker stateId = StateBackgroundWorker.Off;
+            List<StateBackgroundWorker> states = [StateBackgroundWorker.Run, StateBackgroundWorker.On, StateBackgroundWorker.Wait];
+            foreach (StateBackgroundWorker state in states)
             {
                 foreach (dynamic databaseTable in DictDatabaseTableVM.Values)
                 {
@@ -186,6 +187,8 @@ namespace GTRC_Database_Viewer.ViewModels
             }
             return stateId;
         }
+
+        public void RefreshStateColor() { RaisePropertyChanged(nameof(StateColorIdComparisonJson)); RaisePropertyChanged(nameof(StateColorIdComparisonConvertedJson)); }
 
         public void WriteJson()
         {

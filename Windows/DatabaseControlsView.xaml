@@ -36,11 +36,11 @@
                         Style="{StaticResource SavTextButtonStyle}" Padding="7" Margin="0,0,2,0"/>
                 <Button Content="Json" Command="{Binding ExportJsonCmd}"
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
-                <Label Foreground="{Binding StateIdComparisonJson}"
+                <Label Foreground="{Binding StateColorIdComparisonJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
                 <Button Content="Json v?" Command="{Binding ExportConvertedJsonCmd}"
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="15,0,2,0"/>
-                <Label Foreground="{Binding StateIdComparisonConvertedJson}"
+                <Label Foreground="{Binding StateColorIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
             </StackPanel>
             <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"/>
@@ -61,7 +61,7 @@
                         Style="{StaticResource BinTextButtonStyle}" Padding="7" Margin="5,0"/>
                 <Button Content="Json" Command="{Binding DatabaseTableVM.ExportJsonCmd}"
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="5,0,0,0"/>
-                <Label Foreground="{Binding DatabaseTableVM.StateIdComparisonJson}"
+                <Label Foreground="{Binding DatabaseTableVM.StateColorIdComparisonJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3">
@@ -74,7 +74,7 @@
                         Style="{StaticResource ResButtonStyle}" Margin="1,8"/>
                 <Button Content="{Binding DatabaseTableVM.DbVersionName}" Command="{Binding DatabaseTableVM.ExportConvertedJsonCmd}"
                         Style="{StaticResource ExpTextButtonStyle}" Padding="7" Margin="5,0,0,0"/>
-                <Label Foreground="{Binding DatabaseTableVM.StateIdComparisonConvertedJson}"
+                <Label Foreground="{Binding DatabaseTableVM.StateColorIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
             </StackPanel>
             <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"/>
