@@ -59,7 +59,8 @@ namespace GTRC_Database_Viewer.ViewModels
             { typeof(Lap), new List<Type>() { typeof(Lap) } },
             { typeof(Leaderboardline), new List<Type>() { typeof(Leaderboardline) } },
             { typeof(Incident), new List<Type>() { typeof(Incident) } },
-            { typeof(IncidentEntry), new List<Type>() { typeof(IncidentEntry) } }
+            { typeof(IncidentEntry), new List<Type>() { typeof(IncidentEntry) } },
+            { typeof(SeriesDiscordchanneltype), new List<Type>() { typeof(SeriesDiscordchanneltype) } }
         };
     }
 }
