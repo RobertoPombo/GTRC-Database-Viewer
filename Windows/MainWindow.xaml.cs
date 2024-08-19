@@ -13,7 +13,7 @@ namespace GTRC_Database_Viewer.Windows
     {
         public MainWindow()
         {
-            if (!Directory.Exists(GlobalValues.DataDirectory)) { Directory.CreateDirectory(GlobalValues.DataDirectory); }
+            Scripts.CreateDirectories();
             GlobalWinValues.SetCultureInfo();
             GlobalWinValues.UpdateWpfColors(this);
             InitializeNotifications();

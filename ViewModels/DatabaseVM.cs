@@ -12,7 +12,7 @@ namespace GTRC_Database_Viewer.ViewModels
 {
     public class DatabaseVM : ObservableObject
     {
-        private static readonly string pathJson = GlobalValues.DataDirectory + "config filters.json";
+        private static readonly string pathJson = GlobalValues.ConfigDirectory + "config filters.json";
         public static readonly Dictionary<Type, dynamic> DictDatabaseTableVM = [];
         private static Type modelType = GlobalValues.ModelTypeList[0];
         private dynamic databaseTableVM;

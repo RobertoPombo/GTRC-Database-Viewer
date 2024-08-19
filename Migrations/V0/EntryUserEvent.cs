@@ -76,7 +76,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
                         list.Add(_euej);
                     }
                     Type modelType = typeof(GTRC_Basics.Models.EntryUserEvent);
-                    string path = GlobalValues.DataDirectory + "//" + DatabaseVM.DictDatabaseTableVM[modelType].DbVersion + "//" + modelType.Name.ToLower() + " - ALLEVENTS.json";
+                    string path = Directories.DbMigrations + "//" + DatabaseVM.DictDatabaseTableVM[modelType].DbVersion + "//" + modelType.Name.ToLower() + " - ALLEVENTS.json";
                     File.WriteAllText(path, JsonConvert.SerializeObject(list, Formatting.Indented), Encoding.Unicode);
                     currentJsonFileListCount = list.Count;
                 }
