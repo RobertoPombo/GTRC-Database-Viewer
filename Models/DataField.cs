@@ -29,6 +29,7 @@ namespace GTRC_Database_Viewer.Models
             Name = propertyName;
             Value = value;
             listDropdown.Clear();
+            string strValue = value?.ToString() ?? string.Empty;
             if (Property is not null)
             {
                 Type? TypeForeignId = Scripts.GetTypeForeignId(Name);
@@ -59,10 +60,10 @@ namespace GTRC_Database_Viewer.Models
                     Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(value?.A ?? 0, value?.R ?? 0, value?.G ?? 0, value?.B ?? 0));
                     DataType = DataDisplayType.Color;
                 }
-                /*else if (retFull && value?.ToString().Length > ".png".Length && value?.ToString()[^".png".Length..] == ".png") // Image properties
+                else if (retFull && strValue.Length > ".png".Length && strValue[^".png".Length..] == ".png") // Image properties
                 {
                     DataType = DataDisplayType.Image;
-                }*/
+                }
             }
         }
 
