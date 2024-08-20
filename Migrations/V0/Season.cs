@@ -67,5 +67,7 @@ namespace GTRC_Database_Viewer.Migrations.V0
                 else { dateBoPFreeze = value.ToUniversalTime(); }
             }
         }
+        public new DateTime DateEndAutoGenerateRaceNumbers { get { return DateStartCarChangeLimit; } }
+        public new DateTime DateEndChangeTeam { get { return DateStartCarChangeLimit; } }
     }
 }
