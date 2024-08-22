@@ -18,7 +18,7 @@
                           SelectedValuePath="Key" DisplayMemberPath="Value"
                           Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5,0" Cursor="Hand"/>
                 <TextBox Grid.Column="1" Text="{Binding CodeExpertMode, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource TextBoxStyle}" Margin="5" MaxWidth="10"/>
+                         Style="{StaticResource TextBoxStyle}" MaxWidth="10" MaxHeight="10"/>
                 <Button Grid.Column="2" Command="{Binding DatabaseTableVM.ClearFilterCmd}" HorizontalAlignment="Right"
                         Style="{StaticResource ShoButtonStyle}" Padding="7" Margin="5,0"/>
             </Grid>
