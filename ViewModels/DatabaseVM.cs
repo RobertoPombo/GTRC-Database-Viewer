@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows.Media;
+using System.Windows;
 
 using GTRC_Basics;
 using GTRC_WPF;
@@ -15,6 +16,7 @@ namespace GTRC_Database_Viewer.ViewModels
         private static readonly string pathJson = GlobalValues.ConfigDirectory + "config filters.json";
         public static readonly Dictionary<Type, dynamic> DictDatabaseTableVM = [];
         private static Type modelType = GlobalValues.ModelTypeList[0];
+        private string codeExpertMode = string.Empty;
         private dynamic databaseTableVM;
         private bool forceDelete = false;
         private bool forceSameId = false;
@@ -56,6 +58,17 @@ namespace GTRC_Database_Viewer.ViewModels
                 DatabaseTableVM = DictDatabaseTableVM[modelType];
                 RaisePropertyChanged();
             }
+        }
+
+        public string CodeExpertMode
+        {
+            get { return codeExpertMode; }
+            set { codeExpertMode = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(ExpertModeVisibility)); }
+        }
+
+        public Visibility ExpertModeVisibility
+        {
+            get { if (CodeExpertMode == "4242") { return Visibility.Visible; } else { return Visibility.Collapsed; } }
         }
 
         public dynamic DatabaseTableVM
