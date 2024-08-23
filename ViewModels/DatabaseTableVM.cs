@@ -23,7 +23,7 @@ namespace GTRC_Database_Viewer.ViewModels
     public class DatabaseTableVM<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
         private static readonly int noDbVersionNr = -1;
-        private string pathJson = Directories.Database + typeof(ModelType).Name.ToLower() + ".json";
+        private string pathJson = Directories.DbQuickBackup + typeof(ModelType).Name + ".json";
         private DbApiConnectionConfig? DbApiConnectionConfig;
         private SqlConnectionConfig? SqlConnectionConfig;
         private DbApiRequest<ModelType>? httpRequest;
@@ -458,7 +458,7 @@ namespace GTRC_Database_Viewer.ViewModels
         public void LoadDbVersionList()
         {
             dbVersionList = [];
-            string fileNameToFind = typeof(ModelType).Name.ToLower() + ".json";
+            string fileNameToFind = typeof(ModelType).Name + ".json";
             foreach (string directoryPath in Directory.EnumerateDirectories(Directories.DbMigrations))
             {
                 dbVersion = directoryPath.Split('\\')[^1];
@@ -486,7 +486,7 @@ namespace GTRC_Database_Viewer.ViewModels
             List<ModelType> newList = [];
             if (dbVersion is not null && DbVersionNr > noDbVersionNr && MainVM.DictOldDbVersionModels[typeof(ModelType)].Count > DbVersionNr)
             {
-                string path = Directories.DbMigrations + dbVersion + "\\" + typeof(ModelType).Name.ToLower() + ".json";
+                string path = Directories.DbMigrations + dbVersion + "\\" + typeof(ModelType).Name + ".json";
                 if (File.Exists(path))
                 {
                     List<object> oldList = JsonConvert.DeserializeObject<List<object>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];

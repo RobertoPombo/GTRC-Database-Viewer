@@ -5,15 +5,13 @@ namespace GTRC_Database_Viewer
 {
     public static class Directories
     {
-        public static string Database { get { return GlobalValues.DataDirectory + "database\\"; } }
-        public static string DbBackup { get { return Database + "backups\\"; } }
-        public static string DbMigrations { get { return Database + "migrations\\"; } }
+        public static string DbMigrations { get { return GlobalValues.DatabaseDirectory + "migrations\\"; } }
+        public static string DbQuickBackup { get { return GlobalValues.DatabaseDirectory + "viewer\\"; } }
 
         public static void CreateDirectories()
         {
-            if (!Directory.Exists(Database)) { Directory.CreateDirectory(Database); }
-            if (!Directory.Exists(DbBackup)) { Directory.CreateDirectory(DbBackup); }
             if (!Directory.Exists(DbMigrations)) { Directory.CreateDirectory(DbMigrations); }
+            if (!Directory.Exists(DbQuickBackup)) { Directory.CreateDirectory(DbQuickBackup); }
         }
     }
 }
