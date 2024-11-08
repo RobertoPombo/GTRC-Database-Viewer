@@ -12,13 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\V1\**" />
-    <EmbeddedResource Remove="Migrations\V1\**" />
-    <None Remove="Migrations\V1\**" />
-    <Page Remove="Migrations\V1\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="icon.ico" />
   </ItemGroup>
 
