@@ -8,9 +8,9 @@ namespace GTRC_Database_Viewer.Migrations.V1
         {
             get
             {
-                foreach (Entry entry in V1.Entry.List)
+                foreach (Entry obj in V1.Entry.List)
                 {
-                    if (entry.Id == EntryId) { return entry.IsPermanent; }
+                    if (obj.Id == EntryId) { return obj.IsPermanent; }
                 }
                 return new EntryDatetime().IsPermanent;
             }
