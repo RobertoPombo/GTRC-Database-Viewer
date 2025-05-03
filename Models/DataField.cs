@@ -99,8 +99,9 @@ namespace GTRC_Database_Viewer.Models
             {
                 foreach (dynamic filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters)
                 {
-                    if (filter.PropertyName == Property?.Name ?? string.Empty)
+                    if (filter.PropertyName == Property?.Name)
                     {
+                        if (filter.Filter.Length > 0) { break; }
                         if (filter.VisibilityInListView == Visibility.Visible) { filter.VisibilityInListView = Visibility.Collapsed; }
                         else { filter.VisibilityInListView = Visibility.Visible; }
                         foreach (dynamic dataRow in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].FilteredList)
