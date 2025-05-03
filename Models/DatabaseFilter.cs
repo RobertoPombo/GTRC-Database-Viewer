@@ -17,6 +17,7 @@ namespace GTRC_Database_Viewer.Models
         private readonly PropertyInfo? property;
         private string propertyName = "";
         private string filter = string.Empty;
+        private Visibility visibilityInListView = Visibility.Visible;
         private byte filterProcessCount = 0;
 
         public DatabaseFilter(PropertyInfo _property) { property = _property; Initialize(property.Name); }
@@ -58,6 +59,8 @@ namespace GTRC_Database_Viewer.Models
                 }
             }
         }
+
+        public Visibility VisibilityInListView { get { return visibilityInListView; } set { visibilityInListView = value; RaisePropertyChanged(); } }
 
         public static FilterDtos<ModelType> GetFilterDtos (ObservableCollection<DatabaseFilter<ModelType>> filters)
         {

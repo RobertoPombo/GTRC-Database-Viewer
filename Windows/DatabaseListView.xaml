@@ -15,7 +15,7 @@
                  Style="{StaticResource ListBoxHeaderStyle}"  ItemContainerStyle="{StaticResource ListBoxHeaderItemStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Visibility="{Binding VisibilityInListView}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition SharedSizeGroup="{Binding PropertyName}"/>
                         </Grid.ColumnDefinitions>
@@ -30,7 +30,7 @@
                  Style="{StaticResource ListBoxFilterStyle}"  ItemContainerStyle="{StaticResource ListBoxFilterItemStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Visibility="{Binding VisibilityInListView}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition SharedSizeGroup="{Binding PropertyName}"/>
                         </Grid.ColumnDefinitions>
@@ -54,11 +54,11 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid>
+                                        <Grid Visibility="{Binding VisibilityInListView}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition SharedSizeGroup="{Binding Name}" />
                                             </Grid.ColumnDefinitions>
-                                            <Border x:Name="DataBorder" Height="22" Padding="7,5,7,4" Visibility="Visible">
+                                            <Border x:Name="DataBorder" Height="22" Padding="7,5,7,4">
                                                 <TextBlock Grid.Column="0" Text="{Binding Value}" x:Name="DataText"
                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
                                             </Border>

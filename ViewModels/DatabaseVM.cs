@@ -129,7 +129,13 @@ namespace GTRC_Database_Viewer.ViewModels
                             {
                                 string? propertyName = property.PropertyName?.ToString() ?? null;
                                 string? filterValue = property.Filter?.ToString() ?? null;
-                                if (propertyName == _databaseFilter.PropertyName && filterValue is not null) { _databaseFilter.Filter = filterValue; break; }
+                                Visibility visibilityValue = property.VisibilityInListView ?? Visibility.Visible;
+                                if (propertyName == _databaseFilter.PropertyName && filterValue is not null)
+                                {
+                                    _databaseFilter.Filter = filterValue;
+                                    _databaseFilter.VisibilityInListView = visibilityValue;
+                                    break;
+                                }
                             }
                         }
                     }

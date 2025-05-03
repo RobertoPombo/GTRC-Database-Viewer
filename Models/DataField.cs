@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Windows;
 using System.Windows.Media;
 
 using GTRC_Basics;
@@ -80,5 +81,42 @@ namespace GTRC_Database_Viewer.Models
         }
 
         public DataDisplayType DataType { get { return dataType; } set { dataType = value; RaisePropertyChanged(); } }
+
+        public bool IsDisplayedInListView
+        {
+            get
+            {
+                foreach (dynamic filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters)
+                {
+                    if (filter.PropertyName == Property?.Name ?? string.Empty)
+                    {
+                        return filter.VisibilityInListView == Visibility.Visible;
+                    }
+                }
+                return true;
+            }
+            set
+            {
+                foreach (dynamic filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters)
+                {
+                    if (filter.PropertyName == Property?.Name ?? string.Empty)
+                    {
+                        if (filter.VisibilityInListView == Visibility.Visible) { filter.VisibilityInListView = Visibility.Collapsed; }
+                        else { filter.VisibilityInListView = Visibility.Visible; }
+                        foreach (dynamic dataRow in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].FilteredList)
+                        {
+                            foreach (dynamic dataField in dataRow.List)
+                            {
+                                dataField.RaisePropertyChanged(nameof(VisibilityInListView));
+                                dataField.RaisePropertyChanged(nameof(IsDisplayedInListView));
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        public Visibility VisibilityInListView { get { if (IsDisplayedInListView) { return Visibility.Visible; } else { return Visibility.Collapsed; } } }
     }
 }

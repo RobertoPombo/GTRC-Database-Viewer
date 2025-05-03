@@ -10,6 +10,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <ItemsControl Grid.Column="0" ItemsSource="{Binding DatabaseTableVM.Current.List}">
                 <ItemsControl.ItemTemplate>
@@ -48,6 +49,13 @@
                                 <Setter TargetName="CheckText" Property="IsChecked" Value="{Binding Value}"/>
                             </DataTrigger>
                         </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl Grid.Column="2" ItemsSource="{Binding DatabaseTableVM.Current.List}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsDisplayedInListView}" Style="{StaticResource ShowHideCheckBoxStyle}" Margin="0,5"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
