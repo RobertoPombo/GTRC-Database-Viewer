@@ -51,7 +51,7 @@ namespace GTRC_Database_Viewer.ViewModels
                     if (Filters[propertyIndex].PropertyName == property.Name) { Filters.Move(propertyIndex, newIndex); newIndex++; break; }
                 }
             }
-            Filters.Add(new("Nr"));
+            Filters.Add(new(DatabaseFilter<ModelType>.PropertyNameRowsFilter));
             LoadDbVersionList();
             AddCmd = new UICmd(async (o) => await Add());
             DelCmd = new UICmd((o) => _ = Del());
@@ -385,7 +385,7 @@ namespace GTRC_Database_Viewer.ViewModels
             bool isFiltered = false;
             for (int filterNr = Filters.Count - 1; filterNr >= 0; filterNr--) { if (Filters[filterNr].Filter.Length > 0) { isFiltered = true; break; } }
             if (isFiltered) { for (int filterNr = Filters.Count - 1; filterNr >= 0; filterNr--) { Filters[filterNr].Filter = ""; } }
-            else if (Filters.Count > 0) { Filters[0].Filter = DatabaseFilter<ModelType>.NoIdFilter; }
+            else if (Filters.Count > 0) { Filters[^1].Filter = DatabaseFilter<ModelType>.RowsFilter; }
             allowFilter = true;
             _ = FilterList();
         }
@@ -415,6 +415,7 @@ namespace GTRC_Database_Viewer.ViewModels
                     FilteredList.Add(new DataRow<ModelType>(ObjList[objNr], true, objNr + 1));
                 }
             }
+            LimitRowCount();
             Selected = SetSelected(index);
         }
 
@@ -438,6 +439,28 @@ namespace GTRC_Database_Viewer.ViewModels
                         (FilteredList[rowNr1], FilteredList[rowNr2]) = (FilteredList[rowNr2], FilteredList[rowNr1]);
                         (FilteredList[rowNr1].Nr, FilteredList[rowNr2].Nr) = (FilteredList[rowNr2].Nr, FilteredList[rowNr1].Nr);
                     }
+                }
+            }
+            LimitRowCount();
+        }
+
+        public void LimitRowCount()
+        {
+            int minRowNr = 0;
+            int maxRowNr = int.MaxValue;
+            string filter = Filters[^1].Filter.ToString();
+            string[] filterMinMax = filter.Split(':');
+            if (filterMinMax.Length == 1 && int.TryParse(filter, out int value)) { minRowNr = value; maxRowNr = value; }
+            else if (filterMinMax.Length == 2)
+            {
+                if (int.TryParse(filterMinMax[0], out int valueMin)) { minRowNr = valueMin; }
+                if (int.TryParse(filterMinMax[1], out int valueMax)) { maxRowNr = valueMax; }
+            }
+            for (int rowNr = FilteredList.Count; rowNr > 0; rowNr--)
+            {
+                if (rowNr < minRowNr || rowNr > maxRowNr)
+                {
+                    FilteredList.RemoveAt(rowNr - 1);
                 }
             }
             RaisePropertyChanged(nameof(FilteredList));

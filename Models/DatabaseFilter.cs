@@ -13,7 +13,8 @@ namespace GTRC_Database_Viewer.Models
 {
     public class DatabaseFilter<ModelType> : ObservableObject where ModelType : class, IBaseModel, new()
     {
-        public static readonly string NoIdFilter = "-1";
+        public static readonly string PropertyNameRowsFilter = "Nr";
+        public static readonly string RowsFilter = ":50";
         private readonly PropertyInfo? property;
         private string propertyName = "";
         private string filter = string.Empty;
@@ -26,7 +27,7 @@ namespace GTRC_Database_Viewer.Models
         {
             SortCmd = new UICmd((o) => Sort());
             propertyName = _propertyName;
-            if (propertyName == GlobalValues.Id) { filter = NoIdFilter; }
+            if (propertyName == PropertyNameRowsFilter) { filter = RowsFilter; }
         }
 
         [JsonIgnore] public PropertyInfo? Property { get { return property; } }
@@ -44,15 +45,15 @@ namespace GTRC_Database_Viewer.Models
                     filter = value;
                     List<DatabaseFilter<ModelType>> list = [];
                     foreach (DatabaseFilter<ModelType> _filter in DatabaseVM.DictDatabaseTableVM[typeof(ModelType)].Filters) { list.Add(_filter); }
-                    if (list[0].PropertyName != PropertyName)
+                    if (list[^1].PropertyName != PropertyName)
                     {
                         if (filter == string.Empty)
                         {
                             bool noFilter = true;
                             foreach (DatabaseFilter<ModelType> _filter in list) { if (_filter.Filter != filter) { noFilter = false; break; } }
-                            if (noFilter) { list[0].Filter = NoIdFilter; }
+                            if (noFilter) { list[^1].Filter = RowsFilter; }
                         }
-                        else { if (list[0].Filter == NoIdFilter) { list[0].Filter = string.Empty; } }
+                        else { if (list[^1].Filter == RowsFilter) { list[^1].Filter = string.Empty; } }
                     }
                     RaisePropertyChanged();
                     new Thread(ThreadFilterList).Start();
