@@ -179,7 +179,7 @@ namespace GTRC_Database_Viewer.ViewModels
                 DbApiObjectResponse<ModelType> response = await httpRequest.Add(dto);
                 if (response.Status == HttpStatusCode.OK) { await GetByUniqProps(Current.Object); }
                 else if (response.Status == HttpStatusCode.NotFound) { _ = LoadSql(); }
-                else if ((response.Status == HttpStatusCode.NotAcceptable || response.Status == HttpStatusCode.AlreadyReported))
+                else if (response.Status == HttpStatusCode.NotAcceptable || response.Status == HttpStatusCode.AlreadyReported)
                 {
                     Current = new DataRow<ModelType>(response.Object, false);
                 }

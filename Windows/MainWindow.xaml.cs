@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media;
 
 using GTRC_Basics;
 using GTRC_Database_Viewer.ViewModels;
@@ -34,13 +33,7 @@ namespace GTRC_Database_Viewer.Windows
         public void UpdateThemeColors()
         {
             List<GTRC_Basics.Models.Color> colors = DatabaseVM.DictDatabaseTableVM[typeof(GTRC_Basics.Models.Color)].ObjList;
-            for (int colorNr = 0; colorNr < colors.Count; colorNr++)
-            {
-                SolidColorBrush _color = new(Color.FromArgb( colors[colorNr].Alpha, colors[colorNr].Red, colors[colorNr].Green, colors[colorNr].Blue));
-                if (colorNr < WpfColors.List.Count) { WpfColors.List[colorNr] = _color; }
-                else { WpfColors.List.Add(_color); }
-            }
-            GlobalWinValues.UpdateWpfColors(this);
+            GlobalWinValues.UpdateWpfColors(this, colors);
         }
     }
 }

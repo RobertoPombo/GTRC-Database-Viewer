@@ -35,7 +35,7 @@
                 <Label Foreground="{Binding StateColorIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="0" Cursor=""/>
             </StackPanel>
-            <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"
+            <Canvas Width="Auto" Height="1" Background="{DynamicResource colorDetail1}" Margin="0,10"
                     Visibility="{Binding ExpertModeVisibility}"/>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3"
                         Visibility="{Binding ExpertModeVisibility}">
@@ -53,7 +53,7 @@
                 <CheckBox IsChecked="{Binding ForceReseed}" Style="{StaticResource SwitchCheckBoxStyle}"/>
                 <Label Content="Reseed" Style="{StaticResource LabelStyle}" Margin="0,5,5,5"/>
             </StackPanel>
-            <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"
+            <Canvas Width="Auto" Height="1" Background="{DynamicResource colorDetail1}" Margin="0,10"
                     Visibility="{Binding ExpertModeVisibility}"/>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,3"
                        Visibility="{Binding ExpertModeVisibility}">
@@ -82,7 +82,7 @@
                 <Label Foreground="{Binding DatabaseTableVM.StateColorIdComparisonConvertedJson}"
                        Style="{StaticResource StatusLightLabelStyle}" Margin="2,0" Cursor=""/>
             </StackPanel>
-            <Canvas Width="Auto" Height="1" Background="{DynamicResource color3}" Margin="0,10"
+            <Canvas Width="Auto" Height="1" Background="{DynamicResource colorDetail1}" Margin="0,10"
                     Visibility="{Binding ExpertModeVisibility}"/>
             <StackPanel Orientation="Horizontal" Height="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                 <Button Command="{Binding DatabaseTableVM.DelCmd}"

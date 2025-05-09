@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:GTRC_Database_Viewer.ViewModels"
         mc:Ignorable="d"
         Title="GTRC Database Viewer"
-        Background="{DynamicResource color1}"
+        Background="{DynamicResource colorBackground}"
         Icon="/icon.ico"
         FontFamily="{StaticResource Font_GTRC}" FontStyle="Normal" FontWeight="Regular"
         FontSize="13">
@@ -29,7 +29,7 @@
                 <ScrollViewer Margin="15" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                     <StackPanel Orientation="Horizontal">
                         <UserControl Content="{Binding DbApiConnectionConfigVM}"/>
-                        <Canvas Width="1" Height="Auto" Background="{DynamicResource color3}" Margin="10"/>
+                        <Canvas Width="1" Height="Auto" Background="{DynamicResource colorDetail1}" Margin="10"/>
                         <UserControl Content="{Binding SqlConnectionConfigVM}"/>
                     </StackPanel>
                 </ScrollViewer>
